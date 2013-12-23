@@ -1,0 +1,15 @@
+name = Media: MediaHaven
+description = Integrates MediaHaven media files with Media.
+package = "Media"
+core = 7.x
+
+dependencies[] = media
+dependencies[] = media_internet
+dependencies[] = styles
+dependencies[] = file_styles
+dependencies[] = media_internet
+
+files[] = media_mediahaven.module
+files[] = includes/media_mediahaven.admin.inc
+
+configure = admin/config/content/media_mediahaven
