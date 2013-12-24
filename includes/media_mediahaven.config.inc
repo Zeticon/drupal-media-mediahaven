@@ -1,6 +1,6 @@
 <?php
 define('MEDIA_MEDIAHAVEN_PAGER','25');
-define('WEBSERVICE_BASE_URL', 'https://insert host/mediahaven-rest-api-dev/resources');
-define('WEBSERVICE_LOGIN', 'insert name');
-define('WEBSERVICE_PASS', 'insert password');
+define('WEBSERVICE_BASE_URL', 'https://demo.beeldbank.be/mediahaven-rest-api/resources');
+define('WEBSERVICE_LOGIN', 'restapi');
+define('WEBSERVICE_PASS', 'r3st@p1');
 
