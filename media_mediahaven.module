@@ -13,7 +13,26 @@
 *   Which path of the site we're using to display help
 * @param arg
 *   Array that holds the current path as returned from arg() function
-*/
+ */
+/**
+ * load configuration settings
+ */
+require_once dirname(__FILE__) . '/includes/media_mediahaven.config.inc';
+
+/**
+ * Implements hook_stream_wrappers().
+ */
+function media_mediahaven_stream_wrappers() {
+  return array(
+    'mediahaven' => array(
+      'name' => t('MediaHaven media'),
+      'class' => 'MediaMediaHavenStreamWrapper',
+      'description' => t('Media provided by MediaHaven.'),
+      'type' => STREAM_WRAPPERS_READ_VISIBLE,
+    ),
+  );
+}
+
 function media_mediahaven_help($path, $arg) {
 	switch ($path) {
 		case "admin/advanced_help#media_mediahaven":
@@ -23,7 +42,7 @@ function media_mediahaven_help($path, $arg) {
 			return '<p>' . t("Help: Displays links to nodes created on this date") . '</p>';
 			break;
 	}
-} 
+}
 
 /**
 * Implements hook_block_info().
@@ -61,7 +80,7 @@ function media_mediahaven_contents($display){   //$display argument is new.
 		->condition('status', 1) //Published.
 		->condition('created', array($start_time, $end_time), 'BETWEEN')
 		->orderBy('created', 'DESC'); //Most recent first. Query paused here.
-		
+
 	if ($display == 'block'){
 		$query->range(0, $max_num);
 	}
@@ -129,7 +148,7 @@ function media_mediahaven_menu() {
 	);
 
 	$items['admin/content/media/add/media_mediahaven'] = $items['media/add/media_mediahaven'];
-	
+
 	return $items;
 }
 
@@ -193,7 +212,7 @@ function _media_mediahaven_page() {
 			'data' => l($node->title, 'node/' . $node->nid),
 		);
 	}
-	
+
 	if (empty($items)) { //No content in the last week.
 		$page_array['media_mediahaven_arguments'] = array(
 		  //Title serves as page subtitle
@@ -211,4 +230,5 @@ function _media_mediahaven_page() {
 		return $page_array;
 	}
 }
-	
+
+

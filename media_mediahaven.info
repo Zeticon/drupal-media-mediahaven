@@ -11,5 +11,7 @@ dependencies[] = media_internet
 
 files[] = media_mediahaven.module
 files[] = includes/media_mediahaven.admin.inc
+files[] = includes/MediaMediaHavenStreamWrapper.inc
 
 configure = admin/config/content/media_mediahaven
+

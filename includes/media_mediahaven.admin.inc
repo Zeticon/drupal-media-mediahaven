@@ -3,7 +3,7 @@
 /**
  * Callback for /admin/configure/media/media_mediahaven.
  */
-include ('media_mediahaven.config.inc');
+#include ('media_mediahaven.config.inc');
 
 function media_mediahaven_add($form, &$form_state = array(), $redirect = NULL)
 {
@@ -321,7 +321,6 @@ function _submit_mob($form, &$form_state) {
 
 	// Check database for this uri
 	$file = file_uri_to_object($uri, TRUE);
-	drupal_set_message(var_dump($file));
 	$file = file_save($file);
 	/*if ($file === FALSE) {
 		drupal_set_message(t('An error occurred and no file was saved.'), 'error');
