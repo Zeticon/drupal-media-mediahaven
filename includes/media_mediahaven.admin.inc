@@ -123,7 +123,8 @@ function _get_search_facets($query, $search_term)
 		$url .= $search_term;
 
 	}
-	drupal_set_message('facet search url:' . $url);
+
+	drupal_set_message('facet search url:' . $url);
 
 	curl_setopt($crl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 	curl_setopt($crl, CURLOPT_USERPWD, WEBSERVICE_LOGIN . ":" . WEBSERVICE_PASS);
