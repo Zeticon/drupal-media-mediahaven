@@ -5,16 +5,6 @@
 */
 
 /**
-* Implements hook_help.
-*
-* Displays help and module information.
-*
-* @param path
-*   Which path of the site we're using to display help
-* @param arg
-*   Array that holds the current path as returned from arg() function
- */
-/**
  * load configuration settings
  */
 require_once dirname(__FILE__) . '/includes/media_mediahaven.config.inc';
@@ -33,6 +23,16 @@ function media_mediahaven_stream_wrappers() {
   );
 }
 
+/**
+* Implements hook_help.
+*
+* Displays help and module information.
+*
+* @param path
+*   Which path of the site we're using to display help
+* @param arg
+*   Array that holds the current path as returned from arg() function
+ */
 function media_mediahaven_help($path, $arg) {
 	switch ($path) {
 		case "admin/advanced_help#media_mediahaven":
@@ -158,15 +158,35 @@ function media_mediahaven_menu() {
 * @see current_posts_menu()
 */
 function media_mediahaven_form($form, &$form_state) {
-	$form['media_mediahaven_max'] = array(
+	$form['media_mediahaven_settings'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('MediaHaven API'),
+		'#description' => t('You will first need to apply for an API Developer Key'),
+		'#collapsible' => TRUE,
+	  );
+
+	$form['media_mediahaven_settings']['login'] =
+		array(
 		'#type' => 'textfield',
-		'#title' => t('Maximum number of posts'),
-		'#default_value' => variable_get('media_mediahaven_max', 3),
-		'#size' => 2,
-		'#maxlength' => 2,
-		'#description' => t('The maximum number of links to display in the block.'),
+		'#title' => t('MediaHaven login'),
+		'#default_value' => variable_get('media_mediahaven_login', ''),
+		'#size' => 25,
+		'#description' => t('The login to be used by the module to communicate with MediaHaven.'),
 		'#required' => TRUE,
 	);
+	$form['media_mediahaven_settings']['password'] =
+		array(
+		'#type' => 'password',
+		'#title' => t('MediaHaven password'),
+		'#default_value' => variable_get('media_mediahaven_password', ''),
+		'#size' => 25,
+		'#description' => t('The password to be used by the module to communicate with MediaHaven.'),
+		'#required' => TRUE,
+	);
+
+	//TODO store webservice url, paging
+	//second form to store upload settings: departement to be used, auto publish, ...
+
 	return system_settings_form($form);
 }
 
@@ -180,12 +200,14 @@ function media_mediahaven_form($form, &$form_state) {
 *   during processing.
 */
 function media_mediahaven_form_validate($form, &$form_state){
+	/* TODO
 	$max_num = $form_state['values']['media_mediahaven_max'];
 	if (!is_numeric($max_num)){
 		form_set_error('media_mediahaven_max', t('You must enter a number for the maximum number of posts to display.'));
 	} else if ($max_num <= 0){
 		form_set_error('media_mediahaven_max', t('Maximum number of posts to display must be positive.'));
 	}
+	 */
 }
 
 /**
