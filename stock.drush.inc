@@ -12,7 +12,7 @@ function stock_drush_command() {
   $items = array();
 
   $items['stock-example'] = array(
-    'description' => 'A custom stock example drush command'),
+    'description' => 'A custom stock example drush command'
   );
 
   return $items;

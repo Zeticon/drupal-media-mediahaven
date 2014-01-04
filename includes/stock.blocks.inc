@@ -9,7 +9,7 @@
  */
 function stock_my_block() {
   $build = array(
-    '#markup' => t('Some generic content block.');
+    '#markup' => t('Some generic content block.')
   );
 
   $block = array(
