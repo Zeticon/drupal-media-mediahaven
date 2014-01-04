@@ -3,7 +3,7 @@
 /**
  * Callback for /admin/configure/media/media_mediahaven.
  */
-#include ('media_mediahaven.config.inc');
+include_once ('MediaHavenRestClient.inc');
 
 function media_mediahaven_add($form, &$form_state = array(), $redirect = NULL)
 {
@@ -106,41 +106,31 @@ function _get_search_string($state)
 
 function _get_search_facets($query, $search_term)
 {
-	$facets = null;
-
-	$crl = curl_init();
-	$url = WEBSERVICE_BASE_URL ."/facets";
+	$full_query = "";
 
 	if (isset($query) && strlen($query) > 0) {
-		$url .= '?q=' . $query;
+		$full_query .= $query;
 	}
 	if (isset($search_term) && strlen($search_term)>0) {
-		if (!strpos($url, '?q=')) {
-			$url .= '?q=';
-		} else {
-			$url .= ' ';
+		if (strlen($full_query) > 0) {
+			$full_query .= ' ';
 		}
-		$url .= $search_term;
+		$full_query .= $search_term;
 
 	}
 
-	drupal_set_message('facet search url:' . $url);
+	drupal_set_message('facet search query:' . $full_query);
 
-	curl_setopt($crl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	curl_setopt($crl, CURLOPT_USERPWD, WEBSERVICE_LOGIN . ":" . WEBSERVICE_PASS);
-	curl_setopt($crl, CURLOPT_URL, $url);
-	curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($crl, CURLOPT_COOKIEJAR, "/tmp/cookie.txt");
-	curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
-
-	$result = curl_exec($crl);
+    $rest_client = new MediaHavenRestClient(WEBSERVICE_BASE_URL, WEBSERVICE_LOGIN, WEBSERVICE_PASS);
+	$result = $rest_client->getFacets($full_query);
 
 	$arr_facets_json = json_decode($result, TRUE);
 
-	if(isset($arr_facets_json['facets']))
+	if($arr_facets_json && isset($arr_facets_json['facets']))
 	{
 		return $arr_facets_json['facets'];
 	} else {
+	    drupal_set_message($rest_client->error, 'error');
 		return FALSE;
 	}
 }
@@ -209,31 +199,21 @@ function _get_search_results($search,$facet_query)
 		$startIndex = $current_page * $nrOfResults;
 	}
 
-	//echo 'zoekterm: ' . $search . '<br/>';
-	//echo 'facets: ' . $facets . '<br/>';
-
-	$crl = curl_init();
 	$query = $search;
 	if (isset($facet_query)) {
 		$query .= ' ' . $facet_query;
 	}
-	$url = WEBSERVICE_BASE_URL . "/media/search?q=" . $query. '&startIndex=' . $startIndex . '&nrOfResults=' . $nrOfResults;
 
-	curl_setopt($crl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	curl_setopt($crl, CURLOPT_USERPWD, WEBSERVICE_LOGIN . ":" . WEBSERVICE_PASS);
-	curl_setopt($crl, CURLOPT_URL, $url);
-	curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($crl, CURLOPT_COOKIEJAR, "/tmp/cookie.txt");
-	curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
+	drupal_set_message($query);
 
-	$result = curl_exec($crl);
+	$rest_client = new MediaHavenRestClient(WEBSERVICE_BASE_URL, WEBSERVICE_LOGIN, WEBSERVICE_PASS);
+	$result = $rest_client->search($query, $startIndex, $nrOfResults);
 
 	if ($result) {
 		$arr_json = json_decode($result, TRUE);
 	} else {
-		echo (curl_error($crl));
+		drupal_set_message (t('Could not retrieve search results:' . $rest_client->error), 'error');
 	}
-
 
 	return $arr_json;
 }
@@ -304,25 +284,21 @@ function _submit_mob($form, &$form_state) {
 	$redirect = 'media_mediahaven_add';
 
 	// alle info van het mediaobject ophalen
-	$crl = curl_init();
-	$url = WEBSERVICE_BASE_URL . "media/" . $uuid;
 
-	curl_setopt($crl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	curl_setopt($crl, CURLOPT_USERPWD, WEBSERVICE_LOGIN . ":" . WEBSERVICE_PASS);
-	curl_setopt($crl, CURLOPT_URL, $url);
-	curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($crl, CURLOPT_COOKIEJAR, "/tmp/cookie.txt");
-	curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
+	$rest_client = new MediaHavenRestClient(WEBSERVICE_BASE_URL, WEBSERVICE_LOGIN, WEBSERVICE_PASS);
+	$result = $rest_client->getMediaObject($uuid);
 
-	$result = curl_exec($crl);
-
-	$arr_json = json_decode($result, TRUE);
+	if ($result) {
+	  $arr_json = json_decode($result, TRUE);
+	} else {
+	  drupal_set_message($rest_client->error, 'error');
+	  return false;
+	}
 
 
 	// Check database for this uri
 	$file = file_uri_to_object($uri, TRUE);
-	$file = file_save($file);
-	/*if ($file === FALSE) {
+	if ($file === FALSE) {
 		drupal_set_message(t('An error occurred and no file was saved.'), 'error');
 		$redirect = "media_mediahaven_add";
 	} else if (property_exists($file, 'is_new')) {
@@ -344,6 +320,6 @@ function _submit_mob($form, &$form_state) {
 		// Already exists
 		drupal_set_message(t('Already exists'), 'warning');
 		//drupal_goto("media/{$file->fid}/edit");
-	}*/
+	}
 	$form_state['values']['redirect'] = $redirect;
 }

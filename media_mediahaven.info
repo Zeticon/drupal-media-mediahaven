@@ -10,6 +10,7 @@ dependencies[] = file_styles
 dependencies[] = media_internet
 
 files[] = media_mediahaven.module
+files[] = includes/MediaHavenRestClient.inc
 files[] = includes/media_mediahaven.admin.inc
 files[] = includes/media_mediahaven.config.inc
 files[] = includes/MediaMediaHavenStreamWrapper.inc
