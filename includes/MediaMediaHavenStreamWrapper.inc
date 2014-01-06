@@ -13,8 +13,7 @@
 
 class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
 
-	// Overrides $base_url defined in MediaReadOnlyStreamWrapper.
-  protected $base_url =  BASE_URL;
+
 
   /**
    * Returns a url in the format "TODO".
@@ -24,6 +23,8 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
    * here in case that example is redefined or removed.
    */
   function interpolateUrl() {
+    $this->base_url =  media_mediahaven_variable_get('url');
+	return  'http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=b6f010a0ca1c4b9dbc29f27da0a206dc22d5b890a7d6405e9821d3c6923df17b9ea931e0e09f44e2824201c27efb9631';
 	  if ($parameters = $this->get_parameters()) {
       return $this->base_url . 'index.php/embed/?' . http_build_query($parameters);
     }
@@ -39,7 +40,8 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
 
   function getOriginalThumbnailPath() {
     $parts = $this->get_parameters();
-    return 'http://todo/vi/' . check_plain($parts['v']) . '/0.jpg';
+#    return 'http://todo/vi/' . check_plain($parts['v']) . '/0.jpg';
+    return 'http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=b6f010a0ca1c4b9dbc29f27da0a206dc22d5b890a7d6405e9821d3c6923df17b9ea931e0e09f44e2824201c27efb9631';
   }
 
   function getLocalThumbnailPath() {
