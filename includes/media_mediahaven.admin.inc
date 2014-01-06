@@ -4,6 +4,13 @@
  * Callback for /admin/configure/media/media_mediahaven.
  */
 include_once ('MediaHavenRestClient.inc');
+include_once ('media_mediahaven.variables.inc');
+
+function _get_mediahaven_rest_client() {
+  return new MediaHavenRestClient(media_mediahaven_variable_get('url') . MEDIA_MEDIAHAVEN_RESTPOINT,
+      media_mediahaven_variable_get('login'),
+      media_mediahaven_variable_get('password'));
+}
 
 function media_mediahaven_add($form, &$form_state = array(), $redirect = NULL)
 {
@@ -121,7 +128,7 @@ function _get_search_facets($query, $search_term)
 
 	drupal_set_message('facet search query:' . $full_query);
 
-    $rest_client = new MediaHavenRestClient(WEBSERVICE_BASE_URL, WEBSERVICE_LOGIN, WEBSERVICE_PASS);
+    $rest_client = _get_mediahaven_rest_client();
 	$result = $rest_client->getFacets($full_query);
 
 	$arr_facets_json = json_decode($result, TRUE);
@@ -206,7 +213,7 @@ function _get_search_results($search,$facet_query)
 
 	drupal_set_message($query);
 
-	$rest_client = new MediaHavenRestClient(WEBSERVICE_BASE_URL, WEBSERVICE_LOGIN, WEBSERVICE_PASS);
+	$rest_client = _get_mediahaven_rest_client();
 	$result = $rest_client->search($query, $startIndex, $nrOfResults);
 
 	if ($result) {
@@ -285,7 +292,7 @@ function _submit_mob($form, &$form_state) {
 
 	// alle info van het mediaobject ophalen
 
-	$rest_client = new MediaHavenRestClient(WEBSERVICE_BASE_URL, WEBSERVICE_LOGIN, WEBSERVICE_PASS);
+	$rest_client = _get_mediahaven_rest_client();
 	$result = $rest_client->getMediaObject($uuid);
 
 	if ($result) {
