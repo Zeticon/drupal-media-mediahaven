@@ -23,11 +23,16 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
    * here in case that example is redefined or removed.
    */
   function interpolateUrl() {
+	
     $this->base_url =  media_mediahaven_variable_get('url');
-	return  'http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=b6f010a0ca1c4b9dbc29f27da0a206dc22d5b890a7d6405e9821d3c6923df17b9ea931e0e09f44e2824201c27efb9631';
-	  if ($parameters = $this->get_parameters()) {
-      return $this->base_url . 'index.php/embed/?' . http_build_query($parameters);
-    }
+		  
+	if ($parameters = $this->get_parameters()) {
+		return  'http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=' . $parameters['f'];
+		
+      //return $this->base_url . 'index.php/embed/?' . http_build_query($parameters);
+    } else {
+		return FALSE;
+	}
   }
 
   static function getMimeType($uri, $mapping = NULL) {
@@ -41,7 +46,7 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
   function getOriginalThumbnailPath() {
     $parts = $this->get_parameters();
 #    return 'http://todo/vi/' . check_plain($parts['v']) . '/0.jpg';
-    return 'http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=b6f010a0ca1c4b9dbc29f27da0a206dc22d5b890a7d6405e9821d3c6923df17b9ea931e0e09f44e2824201c27efb9631';
+    return 'http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=' . $parts['f'];
   }
 
   function getLocalThumbnailPath() {
