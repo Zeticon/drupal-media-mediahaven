@@ -1,8 +1,8 @@
 <?php
 /**
-* @file
-* A block module that displays recent blog and forum posts.
-*/
+ * @file
+ * A block module that displays recent blog and forum posts.
+ */
 
 /**
  * load configuration settings
@@ -10,256 +10,316 @@
 include_once dirname(__FILE__) . '/includes/media_mediahaven.variables.inc';
 
 /**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function media_mediahaven_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  // Add action link to 'file/add' on 'admin/content/file/thumbnails' page.
+
+  if ($root_path == 'admin/content/file') {
+    $item = menu_get_item('admin/content/media/media_mediahaven/upload');
+    if (!empty($item['access'])) {
+      $data['actions']['output'][] = array(
+          '#theme' => 'menu_local_action',
+          '#link' => $item,
+          '#weight' => $item['weight'],
+      );
+    }
+  }
+}
+
+
+/**
  * Implements hook_stream_wrappers().
  */
 function media_mediahaven_stream_wrappers() {
   return array(
-    'mediahaven' => array(
-      'name' => t('MediaHaven media'),
-      'class' => 'MediaMediaHavenStreamWrapper',
-      'description' => t('Media provided by MediaHaven.'),
-      'type' => STREAM_WRAPPERS_READ_VISIBLE,
-    ),
+      'mediahaven' => array(
+          'name' => t('MediaHaven media'),
+          'class' => 'MediaMediaHavenStreamWrapper',
+          'description' => t('Media provided by MediaHaven.'),
+          'type' => STREAM_WRAPPERS_READ_VISIBLE | STREAM_WRAPPERS_WRITE_VISIBLE,
+      ),
   );
 }
 
 /**
-* Implements hook_help.
-*
-* Displays help and module information.
-*
-* @param path
-*   Which path of the site we're using to display help
-* @param arg
-*   Array that holds the current path as returned from arg() function
+ * Implements hook_help.
+ *
+ * Displays help and module information.
+ *
+ * @param path
+ *   Which path of the site we're using to display help
+ * @param arg
+ *   Array that holds the current path as returned from arg() function
  */
 function media_mediahaven_help($path, $arg) {
-	switch ($path) {
-		case "admin/advanced_help#media_mediahaven":
-			return '<p>' . t("Advanced Help: Displays links to nodes created on this date") . '</p>';
-			break;
-		case "admin/help#media_mediahaven":
-			return '<p>' . t("Help: Displays links to nodes created on this date") . '</p>';
-			break;
-	}
+  switch ($path) {
+    case "admin/advanced_help#media_mediahaven":
+      return '<p>' . t("Advanced Help: Displays links to nodes created on this date") . '</p>';
+      break;
+    case "admin/help#media_mediahaven":
+      return '<p>' . t("Help: Displays links to nodes created on this date") . '</p>';
+      break;
+  }
 }
 
 /**
-* Implements hook_block_info().
-*/
+ * Implements hook_block_info().
+ */
 function media_mediahaven_block_info() {
   $blocks['media_mediahaven'] = array(
-    // The name that will appear in the block list.
-    'info' => t('Mediahaven'),
-    // Default setting.
-    'cache' => DRUPAL_CACHE_PER_ROLE,
+      // The name that will appear in the block list.
+      'info' => t('Mediahaven'),
+      // Default setting.
+      'cache' => DRUPAL_CACHE_PER_ROLE,
   );
   return $blocks;
 }
 
 /**
-* Custom content function.
-*
-* Set beginning and end dates, retrieve posts from database
-* saved in that time period.
-*
-* @return
-*   A result set of the targeted posts.
-*/
+ * Custom content function.
+ *
+ * Set beginning and end dates, retrieve posts from database
+ * saved in that time period.
+ *
+ * @return
+ *   A result set of the targeted posts.
+ */
 function media_mediahaven_contents($display){   //$display argument is new.
-	//Get today's date.
-	$today = getdate();
-	//Calculate midnight a week ago.
-	$start_time = mktime(0, 0, 0,$today['mon'],($today['mday'] - 7), $today['year']);
-	//Get all posts from one week ago to the present.
-	$end_time = time();
-	$max_num = variable_get('media_mediahaven_max', 3);
-	//Use Database API to retrieve current posts.
-	$query = db_select('node', 'n')
-		->fields('n', array('nid', 'title', 'created'))
-		->condition('status', 1) //Published.
-		->condition('created', array($start_time, $end_time), 'BETWEEN')
-		->orderBy('created', 'DESC'); //Most recent first. Query paused here.
+  //Get today's date.
+  $today = getdate();
+  //Calculate midnight a week ago.
+  $start_time = mktime(0, 0, 0,$today['mon'],($today['mday'] - 7), $today['year']);
+  //Get all posts from one week ago to the present.
+  $end_time = time();
+  $max_num = variable_get('media_mediahaven_max', 3);
+  //Use Database API to retrieve current posts.
+  $query = db_select('node', 'n')
+  ->fields('n', array('nid', 'title', 'created'))
+  ->condition('status', 1) //Published.
+  ->condition('created', array($start_time, $end_time), 'BETWEEN')
+  ->orderBy('created', 'DESC'); //Most recent first. Query paused here.
 
-	if ($display == 'block'){
-		$query->range(0, $max_num);
-	}
-	//If called by page, query proceeds directly to execute().
-	return $query->execute();
+  if ($display == 'block'){
+    $query->range(0, $max_num);
+  }
+  //If called by page, query proceeds directly to execute().
+  return $query->execute();
 }
 
 /**
-* Implements hook_block_view().
-*
-* Prepares the contents of the block.
-*/
+ * Implements hook_block_view().
+ *
+ * Prepares the contents of the block.
+ */
 function media_mediahaven_block_view($delta = '') {
-	switch ($delta) {
-		case 'media_mediahaven':
-		$block['subject'] = t('Mediahaven');
-		if (user_access('access content')) {
-			// Use our custom function to retrieve data.
-			$result = media_mediahaven_contents('block');
-			// Array to contain items for the block to render.
-			$items = array();
-			// Iterate over the resultset and format as links.
-			foreach ($result as $node) {
-			  $items[] = array(
-				'data' => l($node->title, 'node/' . $node->nid),
-			  );
-			}
-			// No content in the last week.
-			if (empty($items)) {
-			  $block['content'] = t('No posts available.');
-			} else {
-			  // Pass data through theme function.
-			  $block['content'] = theme('item_list', array(
-				'items' => $items));
-			}
-		}
-		return $block;
-	}
+  switch ($delta) {
+    case 'media_mediahaven':
+      $block['subject'] = t('Mediahaven');
+      if (user_access('access content')) {
+        // Use our custom function to retrieve data.
+        $result = media_mediahaven_contents('block');
+        // Array to contain items for the block to render.
+        $items = array();
+        // Iterate over the resultset and format as links.
+        foreach ($result as $node) {
+          $items[] = array(
+              'data' => l($node->title, 'node/' . $node->nid),
+          );
+        }
+        // No content in the last week.
+        if (empty($items)) {
+          $block['content'] = t('No posts available.');
+        } else {
+          // Pass data through theme function.
+          $block['content'] = theme('item_list', array(
+              'items' => $items));
+        }
+      }
+      return $block;
+  }
 }
 
 function media_mediahaven_menu() {
-	$items = array();
-	$items['admin/config/media/media_mediahaven'] = array(
-		'title' => 'Mediahaven Settings',
-		'description' => 'Configuration for media mediahaven module',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('media_mediahaven_form'),
-		'access arguments' => array('access administration pages'),
-		'type' => MENU_NORMAL_ITEM,
-	);
-	$items['media_mediahaven'] = array(
-		'title' => 'Media',
-		'page callback' => '_media_mediahaven_page',
-		'access arguments' => array('access media_mediahaven content'),
-		'type' => MENU_NORMAL_ITEM, //Will appear in Navigation menu.
-	);
-	$items['media/add/media_mediahaven'] = array(
-		'title' => 'Add media from Mediahaven',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('media_mediahaven_add'),
-		'access arguments' => array('access administration pages'),
-		'type' => MENU_LOCAL_ACTION,
-		'file' => 'includes/media_mediahaven.admin.inc',
-		'weight' => -1,
-	);
+  $items = array();
+  $items['admin/config/media/media_mediahaven'] = array(
+      'title' => 'Mediahaven Settings',
+      'description' => 'Configuration for media mediahaven module',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('media_mediahaven_form'),
+      'access arguments' => array('access administration pages'),
+      'type' => MENU_NORMAL_ITEM,
+  );
+  $items['media_mediahaven'] = array(
+      'title' => 'Media',
+      'page callback' => '_media_mediahaven_page',
+      'access arguments' => array('access media_mediahaven content'),
+      'type' => MENU_NORMAL_ITEM, //Will appear in Navigation menu.
+  );
+  $items['media_mediahaven/upload'] = array(
+      'title' => 'Add Media to MediaHaven',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('media_mediahaven_upload'),
+      'access arguments' => array('access media_mediahaven content'),
+       'weight' => -1,
+      //'type' => MENU_LOCAL_ACTION, //Will appear in Navigation menu.
+  );
+  $items['media/add/media_mediahaven'] = array(
+      'title' => 'Add media from Mediahaven',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('media_mediahaven_add'),
+      'access arguments' => array('access administration pages'),
+      'type' => MENU_LOCAL_ACTION,
+      'file' => 'includes/media_mediahaven.admin.inc',
+      'weight' => -1,
+  );
 
-	$items['admin/content/media/add/media_mediahaven'] = $items['media/add/media_mediahaven'];
+  $items['admin/content/media/add/media_mediahaven'] = $items['media/add/media_mediahaven'];
+  $items['admin/content/media/media_mediahaven/upload'] = $items['media_mediahaven/upload'];
 
-	return $items;
+  return $items;
 }
 
 /**
-* Page callback: Current posts settings
-*
-* @see current_posts_menu()
-*/
+ * Page callback: Current posts settings
+ *
+ * @see current_posts_menu()
+ */
 function media_mediahaven_form($form, &$form_state) {
-	$form['media_mediahaven_settings'] = array(
-		'#type' => 'fieldset',
-		'#title' => t('MediaHaven API'),
-		'#description' => t('You will first need to apply for an API Developer Key'),
-		'#collapsible' => TRUE,
-	  );
+  $form['media_mediahaven_settings'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('MediaHaven API'),
+      '#description' => t('You will first need to apply for an API Developer Key'),
+      '#collapsible' => TRUE,
+  );
 
-	$form['media_mediahaven_settings'][media_mediahaven_variable_name('login')] =
-		array(
-		'#type' => 'textfield',
-		'#title' => t('MediaHaven login'),
-		'#default_value' => media_mediahaven_variable_get('login'),
-		'#size' => 25,
-		'#description' => t('The login to be used by the module to communicate with MediaHaven.'),
-		'#required' => TRUE,
-	);
-	$form['media_mediahaven_settings'][media_mediahaven_variable_name('password')] =
-		array(
-		'#type' => 'password',
-		'#title' => t('MediaHaven password'),
-		'#default_value' => media_mediahaven_variable_get('password'),
-		'#size' => 25,
-		'#description' => t('The password to be used by the module to communicate with MediaHaven.'),
-		'#required' => TRUE,
-	);
+  $form['media_mediahaven_settings'][media_mediahaven_variable_name('login')] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('MediaHaven login'),
+      '#default_value' => media_mediahaven_variable_get('login'),
+      '#size' => 25,
+      '#description' => t('The login to be used by the module to communicate with MediaHaven.'),
+      '#required' => TRUE,
+  );
+  $form['media_mediahaven_settings'][media_mediahaven_variable_name('password')] =
+  array(
+      '#type' => 'password',
+      '#title' => t('MediaHaven password'),
+      '#default_value' => media_mediahaven_variable_get('password'),
+      '#size' => 25,
+      '#description' => t('The password to be used by the module to communicate with MediaHaven.'),
+      '#required' => TRUE,
+  );
 
-	$form['media_mediahaven_settings'][media_mediahaven_variable_name('url')] =
-		array(
-		'#type' => 'textfield',
-		'#title' => t('MediaHaven url'),
-		'#default_value' => media_mediahaven_variable_get('url'),
-		'#size' => 50,
-		'#description' => t('The MediaHaven url.'),
-		'#required' => TRUE,
-	);
+  $form['media_mediahaven_settings'][media_mediahaven_variable_name('url')] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('MediaHaven url'),
+      '#default_value' => media_mediahaven_variable_get('url'),
+      '#size' => 50,
+      '#description' => t('The MediaHaven url.'),
+      '#required' => TRUE,
+  );
 
-	//second form to store upload settings: departement to be used, auto publish, ...
+  //second form to store upload settings: departement to be used, auto publish, ...
 
-	return system_settings_form($form);
+  return system_settings_form($form);
 }
 
 /**
-* Implements validation from the Form API.
-*
-* @param $form
-*   A structured array containing the elements and properties of the form.
-* @param $form_state
-*   An array that stores information about the form's current state
-*   during processing.
-*/
+ * Implements validation from the Form API.
+ *
+ * @param $form
+ *   A structured array containing the elements and properties of the form.
+ * @param $form_state
+ *   An array that stores information about the form's current state
+ *   during processing.
+ */
 function media_mediahaven_form_validate($form, &$form_state){
-	/* TODO
-	$max_num = $form_state['values']['media_mediahaven_max'];
-	if (!is_numeric($max_num)){
-		form_set_error('media_mediahaven_max', t('You must enter a number for the maximum number of posts to display.'));
-	} else if ($max_num <= 0){
-		form_set_error('media_mediahaven_max', t('Maximum number of posts to display must be positive.'));
-	}
-	 */
+  /* TODO
+   $max_num = $form_state['values']['media_mediahaven_max'];
+  if (!is_numeric($max_num)){
+  form_set_error('media_mediahaven_max', t('You must enter a number for the maximum number of posts to display.'));
+  } else if ($max_num <= 0){
+  form_set_error('media_mediahaven_max', t('Maximum number of posts to display must be positive.'));
+  }
+  */
 }
 
 /**
-* Implements hook_permission().
-*/
+ * Implements hook_permission().
+ */
 function media_mediahaven_permission() {
-	return array(
-	'access media_mediahaven content' => array(
-			'title' => t('Access content for the Media Tuur module'),
-		)
-	);
+  return array(
+      'access media_mediahaven content' => array(
+          'title' => t('Access content for the Media Tuur module'),
+      )
+  );
 }
 
 /**
-* Custom page callback function, declared in current_posts_menu().
-*/
-function _media_mediahaven_page() {
-	$result = media_mediahaven_contents('page');
-	//Array to contain items for the page to render.
-	$items = array();
-	//Iterate over the resultset and format as links.
-	foreach ($result as $node) {
-		$items[] = array(
-			'data' => l($node->title, 'node/' . $node->nid),
-		);
-	}
+ * Implements hook_media_browser_plugin_info().
+ *
 
-	if (empty($items)) { //No content in the last week.
-		$page_array['media_mediahaven_arguments'] = array(
-		  //Title serves as page subtitle
-		  '#title' => t('All posts from the last week'),
-		  '#markup' => t('No posts available.'),
-		);
-		return $page_array;
-	} else {
-		$page_array['media_mediahaven_arguments'] = array(
-		  '#title' => t('All posts from the last week'),
-		  '#items' => $items,
-		  //Theme hook with suggestion.
-		  '#theme' => 'item_list__media_mediahaven',
-		);
-		return $page_array;
-	}
+ */
+function media_mediahaven_media_browser_plugin_info() {
+  $info['mediahaven'] = array(
+      'title' => t('MediaHaven'),
+      'class' => 'MediaMediaHavenBrowser',
+  );
+
+  return $info;
 }
+
+/**
+ * Custom page callback function, declared in current_posts_menu().
+ */
+function _media_mediahaven_page() {
+  $result = media_mediahaven_contents('page');
+  //Array to contain items for the page to render.
+  $items = array();
+  //Iterate over the resultset and format as links.
+  foreach ($result as $node) {
+    $items[] = array(
+        'data' => l($node->title, 'node/' . $node->nid),
+    );
+  }
+
+  if (empty($items)) { //No content in the last week.
+    $page_array['media_mediahaven_arguments'] = array(
+        //Title serves as page subtitle
+        '#title' => t('All posts from the last week'),
+        '#markup' => t('No posts available.'),
+    );
+    return $page_array;
+  } else {
+    $page_array['media_mediahaven_arguments'] = array(
+        '#title' => t('All posts from the last week'),
+        '#items' => $items,
+        //Theme hook with suggestion.
+        '#theme' => 'item_list__media_mediahaven',
+    );
+    return $page_array;
+  }
+}
+
+function media_mediahaven_upload($form, &$form_state = array(), $redirect = NULL) {
+  $form['upload'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('MediaHaven API'),
+      '#description' => t('You will first need to apply for an API Developer Key'),
+      '#collapsible' => TRUE,
+  );
+
+ $form['upload']['file'] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('MediaHaven login'),
+      '#required' => TRUE,
+  );
+  return $form;
+}
+
 
 
