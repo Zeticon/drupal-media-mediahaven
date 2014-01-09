@@ -9,7 +9,10 @@
  */
 include_once dirname(__FILE__) . '/includes/media_mediahaven.variables.inc';
 
+<<<<<<< HEAD
 drupal_add_css(drupal_get_path('module', 'media_mediahaven') . '/media_mediahaven.css');
+=======
+>>>>>>> move upload form code to seperate file
 
 /**
  * Implements hook_menu_local_tasks_alter().
@@ -163,6 +166,7 @@ function media_mediahaven_menu() {
       'page callback' => 'drupal_get_form',
       'page arguments' => array('media_mediahaven_upload'),
       'access arguments' => array('access media_mediahaven content'),
+      'file' => 'includes/media_mediahaven.upload.inc',
       'weight' => -1,
       //'type' => MENU_LOCAL_ACTION, //Will appear in Navigation menu.
   );
@@ -306,69 +310,7 @@ function _media_mediahaven_page() {
   }
 }
 
-function media_mediahaven_upload($form, &$form_state = array(), $redirect = NULL) {
-  $form['upload'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Upload a file to MediaHaven'),
-      '#description' => t('Files uploaded through this form will be uploaded to MediaHaven and saved within your drupal installation'),
-      '#collapsible' => TRUE,
-  );
 
-  //TODO fallback to simple upload??
-  /*$form['upload']['file'] =
-  array(
-      '#name' => 'uploaded_file',
-      '#type' => 'file',
-      '#title' => t('Choose a file'),
-      '#title_display' => 'invisible',
-      '#size' => 22,
-      '#theme_wrappers' => array(),
-      '#weight' => -10,
-  );*/
-
-  $form['upload']['uploaded_file'] = array(
-      '#type' => 'plupload',
-      '#title' => t('Upload files'),
-      '#description' => t('This multi-upload widget uses Plupload library.'),
-      //'#upload_validators' => array(
-      //   'file_validate_extensions' => array('jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'),
-      //  'my_custom_file_validator' => array('some validation criteria'),
-      //
-      '#plupload_settings' => array(
-          'runtimes' => 'html5, html4',
-          'chunk_size' => '1mb',
-      ),
-      );
-
-      $form['upload']['submit'] = array(
-          '#name' => 'upload_button',
-          '#type' => 'submit',
-          '#value' => t('Process files'),
-          '#submit' => array('media_mediahaven_upload_submit')
-      );
-      return $form;
-}
-
-function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect = NULL) {
-  foreach($form_state['values']['uploaded_file'] as $uploaded_file) {
-    if ($uploaded_file['status'] == 'done') {
-        $source = $uploaded_file['tmppath'];
-        $destination =  file_directory_temp() . DIRECTORY_SEPARATOR . $uploaded_file['name'];
-         drupal_set_message('current path '. $source);
-         drupal_set_message('new path '. $destination);
-
-         $destination = file_unmanaged_move($source, $destination);
-
-         //upload the file to mediahaven
-
-         //manage file within drupal
-
-    } else {
-      drupal_set_message(t('No uploaded files were provided'));
-    }
-  }
-
-}
 
 
 
