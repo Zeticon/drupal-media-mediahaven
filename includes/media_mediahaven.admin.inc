@@ -196,14 +196,16 @@ function _get_search_results($search,$selected_facets)
 {
 	$startIndex = 0;
 	$nrOfResults  = 25;
-
+	$query = '';
+	
 	if(isset($_GET['page']))
 	{
 		$current_page = (int)$_GET['page'];
 		$startIndex = $current_page * $nrOfResults;
 	}
 
-	$query = '+(' . $search . ')';
+	if($search!='') $query = '+(' . $search . ')';
+	
 	if (isset($selected_facets)) {
 		foreach($selected_facets as $selected_facet)
 		{
