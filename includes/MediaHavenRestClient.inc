@@ -14,7 +14,6 @@ class MediaHavenRestClient {
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_COOKIEJAR => "/tmp/cookie.txt",
         CURLOPT_SSL_VERIFYPEER => false
-
     );
 
   }
@@ -34,25 +33,30 @@ class MediaHavenRestClient {
   }
 
   public function search($query, $startIndex, $nrOfResults){
+	$query = urlencode($query);
     $url = $this->base_rest_url. '/media/search?q=' . $query;
-    if (isset($startIndex) && strlen($startIndex) > 0) {
+	drupal_set_message('----> ' . $url);
+	if (isset($startIndex) && strlen($startIndex) > 0) {
       $url .= '&startIndex=' . $startIndex;
     }
     if (isset($nrOfResults) && strlen($nrOfResults)) {
       $url .= '&nrOfResults=' . $nrOfResults;
     }
+	
     $this->options[CURLOPT_URL] = $url;
+	//drupal_set_message('----> ' . $this->options[CURLOPT_URL]);
     return $this->execute();
   }
 
   public function getMediaObject($id) {
     $this->options[CURLOPT_URL] = $this->base_rest_url. '/media/' . $id;
+	//drupal_set_message('----> ' . $this->options[CURLOPT_URL]);
     return $this->execute();
   }
 
   public function getFacets($query) {
-    $this->options[CURLOPT_URL] = $this->base_rest_url. '/facets?q=' . $query;
-    echo $this->options[CURLOPT_URL];
+    $this->options[CURLOPT_URL] = $this->base_rest_url. '/facets?q=' . urlencode($query);
+    //drupal_set_message('----> ' . $this->options[CURLOPT_URL]);
     return $this->execute();
   }
 
