@@ -42,7 +42,7 @@ class MediaHavenRestClient {
     if (isset($nrOfResults) && strlen($nrOfResults)) {
       $url .= '&nrOfResults=' . $nrOfResults;
     }
-	
+
     $this->options[CURLOPT_URL] = $url;
 	//drupal_set_message('----> ' . $this->options[CURLOPT_URL]);
     return $this->execute();
@@ -57,6 +57,16 @@ class MediaHavenRestClient {
   public function getFacets($query) {
     $this->options[CURLOPT_URL] = $this->base_rest_url. '/facets?q=' . urlencode($query);
     //drupal_set_message('----> ' . $this->options[CURLOPT_URL]);
+    return $this->execute();
+  }
+
+  public function upload($file_path) {
+    $this->options[CURLOPT_URL] = $this->base_rest_url. '/media';
+    $this->options[CURLOPT_POST] = 1;
+    $this->options[CURLOPT_POSTFIELDS] = array(
+        'file' => '@' . $file_path,
+    );
+
     return $this->execute();
   }
 
