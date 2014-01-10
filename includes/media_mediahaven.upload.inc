@@ -60,6 +60,11 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       drupal_set_message('before upload');
       $rest_client = _get_mediahaven_rest_client();
       $result = $rest_client->upload($destination);
+	  
+	  if (!$result) {
+		drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
+		return false;
+	  }
       drupal_set_message('after upload');
       //manage file within drupal
 

@@ -73,11 +73,16 @@ class MediaHavenRestClient {
   private function execute() {
     $curl = $this->init_curl();
     $response = curl_exec($curl);
+	$http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+	$this->error = curl_error($curl);
+	curl_close($curl);
     if (!$response) {
-      $error = curl_error($curl);
       return false;
-    } else {
-      return $response;
+    } else if ($http_code != 200) {
+		$this->error = $response;
+		return false;
+	} else{
+		return $response;
     }
   }
 }
