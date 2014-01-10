@@ -9,10 +9,7 @@
  */
 include_once dirname(__FILE__) . '/includes/media_mediahaven.variables.inc';
 
-<<<<<<< HEAD
 drupal_add_css(drupal_get_path('module', 'media_mediahaven') . '/media_mediahaven.css');
-=======
->>>>>>> move upload form code to seperate file
 
 /**
  * Implements hook_menu_local_tasks_alter().
