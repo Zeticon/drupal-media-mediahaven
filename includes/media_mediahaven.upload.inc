@@ -69,9 +69,18 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
         drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
         return false;
       } else {
+<<<<<<< HEAD
         //manage file within drupal
         mediahaven_file_save($result);
       }
+=======
+        drupal_set_message('new file:' . $result);
+      }
+
+
+
+      //manage file within drupal
+>>>>>>> dev
     } else {
       drupal_set_message(t('No uploaded files were provided'));
     }

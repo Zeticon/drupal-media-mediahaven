@@ -13,7 +13,7 @@ drupal_add_css(drupal_get_path('module', 'media_mediahaven') . '/media_mediahave
 
 /**
  * Implements hook_menu_local_tasks_alter().
- */
+*/
 function media_mediahaven_menu_local_tasks_alter(&$data, $router_item, $root_path) {
   // Add action link to 'file/add' on 'admin/content/file/thumbnails' page.
 
@@ -207,7 +207,7 @@ function media_mediahaven_form($form, &$form_state) {
   );
   $form['media_mediahaven_settings'][media_mediahaven_variable_name('password')] =
   array(
-      '#type' => 'password',
+      '#type' => 'textfield',
       '#title' => t('MediaHaven password'),
       '#default_value' => media_mediahaven_variable_get('password'),
       '#size' => 25,
@@ -226,6 +226,44 @@ function media_mediahaven_form($form, &$form_state) {
   );
 
   //second form to store upload settings: departement to be used, auto publish, ...
+  $form['media_mediahaven_upload_settings'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('MediaHaven Upload settings'),
+      '#description' => t('Manage the configuration that will be used when you upload files to MediaHaven'),
+      '#collapsible' => TRUE,
+  );
+
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('ingestspace_id')] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('Ingestspace id'),
+      '#default_value' => media_mediahaven_variable_get('ingestspace_id'),
+      '#size' => 50,
+      '#description' => t('The MediaHaven ingestspace that will be used to upload files to.'),
+      '#required' => TRUE,
+  );
+
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('autopublish')] =
+  array(
+      '#type' => 'checkbox',
+      '#title' => t('Auto publish'),
+      '#default_value' => media_mediahaven_variable_get('autopublish'),
+      '#size' => 50,
+      '#description' => t('When enabled files will be automatically published after processing.
+          If disabled a user will have to manually publish them using the
+          mediahaven media management software'),
+
+  );
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('department_id')] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('Department id'),
+      '#default_value' => media_mediahaven_variable_get('department_id'),
+      '#size' => 50,
+      '#description' => t('The default department where uploaded files will belong to.
+          This will be used when autopublishing is enabled'),
+      '#required' => TRUE,
+  );
 
   return system_settings_form($form);
 }
