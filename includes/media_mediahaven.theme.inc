@@ -39,8 +39,8 @@ function theme_media_mediahaven_thumbnail($variables) {
   $prefix = '<div ' . drupal_attributes($attributes) . '><div class="media-thumbnail">';
   $suffix = '</div></div>';
 
-  // Arguments for the thumbnail link.  
-  $thumb = '<img style="height:100px;width:100px;" src="' . str_replace('mediahaven://f/','http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=',$element['#file']->uri) . '">';
+  // Arguments for the thumbnail link.
+   $thumb = '<img src="' . str_replace('mediahaven://f/',media_mediahaven_variable_get('url') . '/index.php/embed/image?img=',$element['#file']->uri) . '&w=100&h=100">';
   //$thumb = $element['#children'];
 
   $target = 'file/' . $element['#file']->fid . '/edit';
