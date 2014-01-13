@@ -307,7 +307,90 @@ function _media_mediahaven_page() {
   }
 }
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * This alter enhances the default admin/content/file page making modifications to the thumbnail view by replacing the existing
+ * checkboxes and table with thumbnails.
+ */
+function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state) {
+	if (!empty($form_state['values']['operation'])) {
+    // The form is being rebuilt because an operation requiring confirmation
+    // We don't want to be messing with it in this case.
+    return;
+  }
+  
+  $path = drupal_get_path('module', 'media_mediahaven');
+    
+  if (arg(3) == 'thumbnails') {
+	drupal_set_message('thumbnails');
+	
+	if (empty($form['admin']['files'])) {
+      // Display empty text if there are no files.
+      $form['admin']['files'] = array(
+        '#markup' => '<p>' . $form['files']['#empty'] . '</p>',
+      );
+    } else {
+		$files = file_load_multiple(array_keys($form['admin']['files']));
 
+		$form['admin']['files'] = array(
+			'#tree' => TRUE,
+			'#prefix' => '<div class="media-display-thumbnails media-clear clearfix"><ul id="media-browser-library-list" class="media-list-thumbnails">',
+			'#suffix' => '</ul></div>',
+		);
+		
+		foreach ($files as $file) {
+			if(strstr($file->uri, 'mediahaven://'))
+			{
+				$preview = media_mediahaven_get_thumbnail_preview($file, TRUE);
+				//drupal_set_message('filename: ' . $file->fid);
+			} else {
+				$preview = media_get_thumbnail_preview($file, TRUE);				
+			}
+			$form['admin']['files'][$file->fid] = array(
+				  '#type' => 'checkbox',
+				  '#title' => '',
+				  '#prefix' => '<li>' . drupal_render($preview),
+				  '#suffix' => '</li>',
+				);
+		}
+		
+	}
+  }
+  
+}
 
+function media_mediahaven_get_thumbnail_preview($file, $link = NULL) {
+  // If a file has an invalid type, allow file_view_file() to work.
+  if (!file_type_is_enabled($file->type)) {
+    $file->type = file_get_type($file);
+  }
+ drupal_set_message($file->filemime);
+  // @todo should CSS be attached to the form element here?
+  // $element['#attached']['css'][] = drupal_get_path('module', 'media') . '/css/media.css';
+  
+	$preview = file_view_file($file, 'preview');
+	$preview['#show_names'] = TRUE;
+	$preview['#add_link'] = $link;
+	$preview['#theme_wrappers'][] = 'media_mediahaven_thumbnail';
+
+	return $preview;
+}
+
+function media_mediahaven_theme() {
+  return array(
+    // The default media file list form element.
+    'media_file_list' => array(
+      'variables' => array('element' => NULL),
+    ),
+
+    // A preview of the uploaded file.
+    'media_mediahaven_thumbnail' => array(
+      'render element' => 'element',
+      'file' => 'includes/media_mediahaven.theme.inc',
+    ),
+
+  );
+}
 
 
