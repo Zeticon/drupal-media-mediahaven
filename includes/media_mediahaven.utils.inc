@@ -3,12 +3,13 @@
  * Save a mediahaven media file into drupal
  */
 function mediahaven_file_save($media_data) {
-    $uri = file_stream_wrapper_uri_normalize("mediahaven://f/".$media_data['fragment_id']);
+    $uri = file_stream_wrapper_uri_normalize("mediahaven://f/".$media_data['fragmentId']);
+    drupal_set_message('uri to save '.$uri);
 	$file = file_uri_to_object($uri, TRUE);
 	if($media_data['type']=='Image')
 	{
 		$file->filemime = 'image/jpeg';
-	} elseif($$media_data['type']=='Video')
+	} elseif($media_data['type']=='Video')
 	{
 		$file->filemime = 'video/mp4';
 	}
@@ -25,7 +26,7 @@ function mediahaven_file_save($media_data) {
 		$redirect = "media/{$file->fid}/edit";
 
 		// I do not understand the block below
-		field_attach_submit('media', $file, $form, $form_state);
+		//field_attach_submit('media', $file, $form, $form_state);
 		// Make a copy of the file object to use as the media object
 		// (file is a field of media and the base table). This is weird.
 		$media = clone($file);

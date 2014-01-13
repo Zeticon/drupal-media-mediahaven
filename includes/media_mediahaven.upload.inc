@@ -1,6 +1,7 @@
 <?php
 include_once ('MediaHavenRestClient.inc');
 include_once ('media_mediahaven.admin.inc');
+include_once ('media_mediahaven.utils.inc');
 
 function media_mediahaven_upload($form, &$form_state = array(), $redirect = NULL) {
   $form['upload'] = array(
@@ -67,20 +68,10 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
 
       if (!$result) {
         drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
-        return false;
       } else {
-<<<<<<< HEAD
         //manage file within drupal
-        mediahaven_file_save($result);
+        mediahaven_file_save(json_decode($result, TRUE));
       }
-=======
-        drupal_set_message('new file:' . $result);
-      }
-
-
-
-      //manage file within drupal
->>>>>>> dev
     } else {
       drupal_set_message(t('No uploaded files were provided'));
     }
