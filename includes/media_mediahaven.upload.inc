@@ -50,26 +50,31 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
   foreach($form_state['values']['uploaded_file'] as $uploaded_file) {
     if ($uploaded_file['status'] == 'done') {
       $source = $uploaded_file['tmppath'];
-      $destination =  file_directory_temp() . DIRECTORY_SEPARATOR . $uploaded_file['name'];
+      $destination =  file_directory_temp() . '/' . $uploaded_file['name'];
       drupal_set_message('current path '. $source);
       drupal_set_message('new path '. $destination);
 
       $destination = file_unmanaged_move($source, $destination);
-
+      $metadata_file = substr($destination, 0, strrpos($destination, '.')) . '.xml';
+      $metadata_file = file_unmanaged_save_data('Testing the metadata file', $metadata_file);
       //upload the file to mediahaven
-      drupal_set_message('before upload');
       $rest_client = _get_mediahaven_rest_client();
-      $result = $rest_client->upload($destination);
-	  
-	  if (!$result) {
-		drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
-		return false;
-	  }
-      drupal_set_message('after upload');
-      //manage file within drupal
+      $result = $rest_client->upload($destination, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
 
       //clean up
       file_unmanaged_delete($destination);
+      file_unmanaged_delete($metadata_file);
+
+      if (!$result) {
+        drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
+        return false;
+      } else {
+        drupal_set_message('new file:' . $result);
+      }
+
+
+
+      //manage file within drupal
     } else {
       drupal_set_message(t('No uploaded files were provided'));
     }

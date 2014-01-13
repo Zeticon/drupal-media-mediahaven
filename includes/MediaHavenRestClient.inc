@@ -60,14 +60,16 @@ class MediaHavenRestClient {
     return $this->execute();
   }
 
-  public function upload($file_path) {
+  public function upload($media_file, $metadata_file, $ingestspace_id) {
     $this->options[CURLOPT_URL] = $this->base_rest_url. '/media';
     $this->options[CURLOPT_POST] = 1;
     $this->options[CURLOPT_POSTFIELDS] = array(
-        'file' => '@' . $file_path,
+        'file' => '@' . $media_file .';filename=' . substr($media_file, strrpos($media_file, '/')+1),
+        'metadata' => '@' . $metadata_file,
+        'ingestSpaceId' => $ingestspace_id,
     );
 
-    return $this->execute();
+   return $this->execute();
   }
 
   private function execute() {
