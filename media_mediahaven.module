@@ -264,7 +264,33 @@ function media_mediahaven_form($form, &$form_state) {
           This will be used when autopublishing is enabled'),
       '#required' => TRUE,
   );
-
+		
+	//third form to store the thumbnail settings: dimensions
+	$form['media_mediahaven_thumbnail_settings'] = array(
+	  '#type' => 'fieldset',
+	  '#title' => t('MediaHaven Thumbnail settings'),
+	  '#description' => t('Manage the configuration that will to dispaly the MediaHaven thumbnails'),
+	  '#collapsible' => TRUE,
+	);
+	$form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_width')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Thumb_width'),
+		'#default_value' => media_mediahaven_variable_get('thumb_width',150),
+		'#size' => 5,
+		'#description' => t('Width of the thumbnails (in px)'),
+		'#required' => TRUE,
+	);
+	$form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_height')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Thumb_height'),
+		'#default_value' => media_mediahaven_variable_get('thumb_height',150),
+		'#size' => 5,
+		'#description' => t('Height of the thumbnails (in px)'),
+		'#required' => TRUE,
+	);
+  
   return system_settings_form($form);
 }
 
@@ -361,7 +387,6 @@ function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state)
   $path = drupal_get_path('module', 'media_mediahaven');
     
   if (arg(3) == 'thumbnails') {
-	drupal_set_message('thumbnails');
 	
 	if (empty($form['admin']['files'])) {
       // Display empty text if there are no files.
@@ -381,9 +406,8 @@ function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state)
 			if(strstr($file->uri, 'mediahaven://'))
 			{
 				$preview = media_mediahaven_get_thumbnail_preview($file, TRUE);
-				//drupal_set_message('filename: ' . $file->fid);
 			} else {
-				$preview = media_get_thumbnail_preview($file, TRUE);				
+				$preview = media_get_thumbnail_preview($file, TRUE);
 			}
 			$form['admin']['files'][$file->fid] = array(
 				  '#type' => 'checkbox',
@@ -403,7 +427,6 @@ function media_mediahaven_get_thumbnail_preview($file, $link = NULL) {
   if (!file_type_is_enabled($file->type)) {
     $file->type = file_get_type($file);
   }
- drupal_set_message($file->filemime);
   // @todo should CSS be attached to the form element here?
   // $element['#attached']['css'][] = drupal_get_path('module', 'media') . '/css/media.css';
   
