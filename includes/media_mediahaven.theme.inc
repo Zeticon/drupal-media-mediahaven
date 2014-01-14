@@ -43,7 +43,7 @@ function theme_media_mediahaven_thumbnail($variables) {
 	$thumb_height = media_mediahaven_variable_get('thumb_height');
 	
   // Arguments for the thumbnail link.
-   $thumb = '<img src="' . str_replace('mediahaven://f/',media_mediahaven_variable_get('url') . '/index.php/embed/image?img=',$element['#file']->uri) . '">';
+   $thumb = '<img src="' . str_replace('mediahaven://f/',media_mediahaven_variable_get('url') . '/index.php/embed/image?img=',$element['#file']->uri) . '&w=100&h=100">';
   //$thumb = $element['#children'];
 
   $target = 'file/' . $element['#file']->fid . '/edit';
