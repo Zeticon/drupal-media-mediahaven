@@ -2,7 +2,7 @@
 /*
  * Save a mediahaven media file into drupal
  */
-function mediahaven_file_save($media_data) {
+function media_mediahaven_file_save($media_data) {
     $uri = file_stream_wrapper_uri_normalize("mediahaven://f/".$media_data['fragmentId']);
     drupal_set_message('uri to save '.$uri);
 	$file = file_uri_to_object($uri, TRUE);
@@ -44,4 +44,26 @@ function mediahaven_file_save($media_data) {
 	}
     return $file;
 
+}
+
+function media_mediahaven_generate_metadata($metadata_file, $metadata) {
+
+  $xml = simplexml_load_file(dirname(__FILE__).'/../assets/metadata.template.xml');
+  $xml->MDProperties[0]->Department = media_mediahaven_variable_get('department_id');
+
+  global $user;
+  $application_user = $user->name;
+  if (!empty($user->mail)) {
+    $application_user = $user->mail;
+  }
+  $xml->MDProperties[0]->applicatie_gebruiker = $application_user;
+
+  if(!empty($metadata['title'])) {
+    $xml->title = $metadata['title'];
+  }
+ if(!empty($metadata['description'])) {
+    $xml->description = $metadata['description'];
+  }
+
+  return $xml->asXML($metadata_file);
 }

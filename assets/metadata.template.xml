@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MediaHAVEN_external_metadata>
+  <MDProperties>
+    <Authors type="list">
+      <auteur></auteur>
+    </Authors>
+    <CreationDate></CreationDate>
+    <Categories type="list">
+        <category></category>
+    </Categories>
+   <publisher></publisher>
+   <rights_owner>copy right</rights_owner>
+   <Department></Department></MDProperties>
+  <ALLOW_DUPLICATE>0</ALLOW_DUPLICATE>
+  <title>provided title</title>
+  <description>provided description</description>
+  <keywords>
+    <keyword>k1</keyword>
+    <keyword>k2</keyword>
+    <keyword>k3</keyword>
+  </keywords>
+</MediaHAVEN_external_metadata>

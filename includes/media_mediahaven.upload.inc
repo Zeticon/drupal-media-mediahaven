@@ -38,7 +38,35 @@ function media_mediahaven_upload($form, &$form_state = array(), $redirect = NULL
         '#weight' => -10,
     );
   }
-  $form['upload']['submit'] = array(
+  $form['metadata'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Metadata that will be applied to the uploaded files'),
+      '#description' => t('The entered values will be applied to all files currently being uploaded.'),
+      '#collapsible' => TRUE,
+  );
+
+   $form['metadata']['title'] = array(
+        '#name' => 'title',
+        '#type' => 'textfield',
+        '#title' => t('Title of the media object(s)'),
+        '#size' => 22,
+    );
+
+   $form['metadata']['description'] = array(
+        '#name' => 'description',
+        '#type' => 'textarea',
+        '#title' => t('Description of the media object(s)'),
+
+       );
+    $form['metadata']['keywords'] = array(
+        '#name' => 'keywords',
+        '#type' => 'textarea',
+        '#title' => t('Keywords'),
+        '#description' => t('Enter multiple keywords separated by a comma (,)'),
+
+       );
+
+  $form['submit'] = array(
       '#name' => 'upload_button',
       '#type' => 'submit',
       '#value' => t('Process files'),
@@ -56,8 +84,10 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       drupal_set_message('new path '. $destination);
 
       $destination = file_unmanaged_move($source, $destination);
+
+
       $metadata_file = substr($destination, 0, strrpos($destination, '.')) . '.xml';
-      $metadata_file = file_unmanaged_save_data('Testing the metadata file', $metadata_file);
+      $metadata_file = file_unmamedia_mediahaven_generate_metadata($metadata_file, '');
       //upload the file to mediahaven
       $rest_client = _get_mediahaven_rest_client();
       $result = $rest_client->upload($destination, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
@@ -70,7 +100,7 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
         drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
       } else {
         //manage file within drupal
-        mediahaven_file_save(json_decode($result, TRUE));
+        media_mediahaven_file_save(json_decode($result, TRUE));
       }
     } else {
       drupal_set_message(t('No uploaded files were provided'));
