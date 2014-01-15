@@ -34,8 +34,8 @@ class MediaHavenRestClient {
 
   public function search($query, $startIndex, $nrOfResults){
 	$query = urlencode($query);
-    $url = $this->base_rest_url. '/media/search?q=' . $query;
-	drupal_set_message('----> ' . $url);
+    $url = $this->base_rest_url. '/media?q=' . $query;
+	//drupal_set_message('----> ' . $url);
 	if (isset($startIndex) && strlen($startIndex) > 0) {
       $url .= '&startIndex=' . $startIndex;
     }
