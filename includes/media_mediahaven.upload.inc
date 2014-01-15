@@ -80,6 +80,7 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
     if ($uploaded_file['status'] == 'done') {
       $source = $uploaded_file['tmppath'];
       $destination =  file_directory_temp() . '/' . $uploaded_file['name'];
+	  print_r($destination);
       drupal_set_message('current path '. $source);
       drupal_set_message('new path '. $destination);
 

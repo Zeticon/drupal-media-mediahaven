@@ -39,6 +39,9 @@ function theme_media_mediahaven_thumbnail($variables) {
   $prefix = '<div ' . drupal_attributes($attributes) . '><div class="media-thumbnail">';
   $suffix = '</div></div>';
 
+	$thumb_width = media_mediahaven_variable_get('thumb_width');
+	$thumb_height = media_mediahaven_variable_get('thumb_height');
+	
   // Arguments for the thumbnail link.
    $thumb = '<img src="' . str_replace('mediahaven://f/',media_mediahaven_variable_get('url') . '/index.php/embed/image?img=',$element['#file']->uri) . '&w=100&h=100">';
   //$thumb = $element['#children'];

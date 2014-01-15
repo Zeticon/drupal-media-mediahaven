@@ -267,12 +267,12 @@ function _generate_result_current($media_item) {
 
 	$variables = array();
 	$variables['path'] = $media_item['previewImagePath'];
-	$variables['width'] = 150;
-	$variables['height'] = 150;
-
+	$variables['width'] = media_mediahaven_variable_get('thumb_width');
+	$variables['height'] = media_mediahaven_variable_get('thumb_height');
+	
 	//return theme('image', $variables);
 	//current_path() . '?uuid=
-	return l('<img width="150" height="150" src="' . $media_item['previewImagePath'] . '"/>'
+	return l('<img width="' . $variables['width'] . '" height="' . $variables['height'] . '" src="' . $media_item['previewImagePath'] . '"/>'
 		, 'admin/content/media/add/media_mediahaven/'
 		, array('attributes' => array('class' => 'anchor-class')
 					, 'html' => TRUE
