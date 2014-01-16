@@ -377,6 +377,16 @@ function _media_mediahaven_page() {
  * This alter enhances the default admin/content/file page making modifications to the thumbnail view by replacing the existing
  * checkboxes and table with thumbnails.
  */
+function media_mediahaven_form_file_entity_edit_alter(&$form, $form_state) {
+	$file = $form['preview']['#file'];
+	if(strstr($file->uri, 'mediahaven://'))
+	{
+		$preview = media_mediahaven_get_thumbnail_preview($file, TRUE);
+		$form['preview'] = $preview;
+	}	
+	return;
+}
+
 function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state) {
 	if (!empty($form_state['values']['operation'])) {
     // The form is being rebuilt because an operation requiring confirmation
