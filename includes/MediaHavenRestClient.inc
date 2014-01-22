@@ -70,6 +70,8 @@ class MediaHavenRestClient {
         'ingestSpaceId' => $ingestspace_id,
     );
 
+   drupal_set_message(serialize($this->options[CURLOPT_POSTFIELDS]));
+   //file_unmanaged_copy($metadata_file, $metadata_file .'bck');
    return $this->execute();
   }
 

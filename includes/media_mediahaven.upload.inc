@@ -86,16 +86,17 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
 
       $destination = file_unmanaged_move($source, $destination);
 
-
+      $metadata = _build_metadata($form_state['values']);
       $metadata_file = substr($destination, 0, strrpos($destination, '.')) . '.xml';
-      $metadata_file = file_unmamedia_mediahaven_generate_metadata($metadata_file, '');
+      media_mediahaven_generate_metadata($metadata_file, $metadata);
+
       //upload the file to mediahaven
       $rest_client = _get_mediahaven_rest_client();
       $result = $rest_client->upload($destination, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
 
       //clean up
       file_unmanaged_delete($destination);
-      file_unmanaged_delete($metadata_file);
+      //file_unmanaged_delete($metadata_file);
 
       if (!$result) {
         drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
@@ -108,4 +109,11 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
     }
   }
 
+}
+
+function _build_metadata($form_values) {
+    $metadata['title'] = $form_values['title'];
+    $metadata['description'] = $form_values['description'];
+    $metadata['keywords'] = explode(',', $form_values['keywords']);
+    return $metadata;
 }
