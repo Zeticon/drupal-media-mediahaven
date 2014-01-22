@@ -119,9 +119,9 @@ function _get_search_facets($selected_facets, $search_term)
 
 	$arr_facets_json = json_decode($result, TRUE);
 
-	if($arr_facets_json && isset($arr_facets_json['facets']))
+	if($arr_facets_json && isset($arr_facets_json['facet']))
 	{
-		return $arr_facets_json['facets'];
+		return $arr_facets_json['facet'];
 	} else {
 	    drupal_set_message($rest_client->error, 'error');
 		return FALSE;
@@ -145,7 +145,7 @@ function _generate_facets($facets)
 
 	foreach($facets as $facet_category)
 	{
-		$children = _generate_facets_link($facet_category['values']);
+		$children = _generate_facets_link($facet_category['value']);
 
 		$facet_category = array('data' 		=> $facet_category['title'],
 								'id' 		=> $facet_category['name'],
@@ -170,7 +170,7 @@ function _generate_facets_link($facets)
 	foreach($facets as $facet_item)
 	{
 		$facet_links[] = '<a href="' . '?fa[]=' . parse_facet_link($facet_item['query']) . '">'
-							. $facet_item['label']
+							. htmlentities($facet_item['label'])
 							. '</a> (' . $facet_item['count'] . ')';
 	}
 	if(count($facet_links)>$max_facets)
@@ -186,7 +186,7 @@ function parse_facet_link($query)
 	$r = explode('+(', $query);
 
 	if (isset($r[1])){
-		$r[1] = substr($r[1],0,-1);
+		$r[1] = substr(trim($r[1]),0,-1);
 		return urlencode(trim($r[0])) . '&search=' . $r[1];
 	}
 	return urlencode(trim($r[0]));
