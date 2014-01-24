@@ -304,14 +304,40 @@ function media_mediahaven_form($form, &$form_state) {
  *   during processing.
  */
 function media_mediahaven_form_validate($form, &$form_state){
-  /* TODO
-   $max_num = $form_state['values']['media_mediahaven_max'];
-  if (!is_numeric($max_num)){
-  form_set_error('media_mediahaven_max', t('You must enter a number for the maximum number of posts to display.'));
-  } else if ($max_num <= 0){
-  form_set_error('media_mediahaven_max', t('Maximum number of posts to display must be positive.'));
-  }
-  */
+
+	//if($form_state['input']['media_mediahaven__ingestspace_id'])
+	$form_state['values']['media_mediahaven__ingestspace_id'] = trim($form_state['values']['media_mediahaven__ingestspace_id']);
+	if($form_state['values']['media_mediahaven__ingestspace_id'])
+	{
+		if(!validate_uuid($form_state['values']['media_mediahaven__ingestspace_id']))
+		{
+			form_set_error('media_mediahaven__ingestspace_id', t('Ingestspace id is not a valid uuid.'));
+		}
+	}
+	
+	//if($form_state['input']['media_mediahaven__department_id'])
+	$form_state['values']['media_mediahaven__department_id'] = trim($form_state['values']['media_mediahaven__department_id']);
+	if($form_state['values']['media_mediahaven__department_id'])
+	{
+		if(!validate_uuid($form_state['values']['media_mediahaven__department_id']))
+		{
+			form_set_error('media_mediahaven__department_id', t('Department id is not a valid uuid.'));
+		}
+	}
+}
+
+/**
+ * Validate uuid
+ */
+function validate_uuid($uuid = FALSE)
+{
+	if($uuid === FALSE) return FALSE;
+	 
+	if (preg_match('/^\{?[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}\}?$/', $uuid)) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
 }
 
 /**
