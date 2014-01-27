@@ -15,6 +15,10 @@
 define('MEDIA_MEDIAHAVEN_NAMESPACE', 'media_mediahaven__');
 define('MEDIA_MEDIAHAVEN_PAGER','25');
 define('MEDIA_MEDIAHAVEN_RESTPOINT', '/mediahaven-rest-api/resources/');
+define('MEDIA_MEDIAHAVEN_RIGHTS_OWNER', 'Zeticon');
+define('MEDIA_MEDIAHAVEN_RIGHTS', 'Full rights on reproduction');
+define('MEDIA_MEDIAHAVEN_COPYRIGHT_NOTICE', 'Not for commercial use');
+
 #define('MEDIA_MEDIAHAVEN_API_APPLICATION_URL', 'http://www.mediahaven.com/services/api/keys');
 #define('MEDIA_MEDIAHAVEN_MAIN_URL', 'http://www.mediahaven.com/');
 

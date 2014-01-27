@@ -56,8 +56,12 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
   if (!empty($user->mail)) {
     $application_user = $user->mail;
   }
-  $xml->MDProperties[0]->applicatie_gebruiker = $application_user;
+	$xml->MDProperties[0]->applicatie_gebruiker = $application_user;
+	$xml->MDProperties[0]->rights_owner = media_mediahaven_variable_get('rights_owner');
+	$xml->MDProperties[0]->rights = media_mediahaven_variable_get('rights');  
+	$xml->MDProperties[0]->copyright_notice = media_mediahaven_variable_get('copyright');
 
+  
   if(!empty($metadata['title'])) {
     $xml->title = $metadata['title'];
   }
@@ -65,6 +69,8 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
   if(!empty($metadata['description'])) {
     $xml->description = $metadata['description'];
   }
+
+  
 
   if (!empty($metadata['keywords'])) {
     foreach ($metadata['keywords'] as $keyword) {

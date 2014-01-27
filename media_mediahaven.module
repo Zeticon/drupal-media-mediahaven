@@ -265,6 +265,41 @@ function media_mediahaven_form($form, &$form_state) {
       '#required' => TRUE,
   );
 		
+	$form['media_mediahaven_rights_settings'] = array(
+	  '#type' => 'fieldset',
+	  '#title' => t('MediaHaven Rights settings'),
+	  '#description' => t('Manage rights and copyright notice for media from Mediahaven'),
+	  '#collapsible' => TRUE,
+	);
+	$form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights_owner')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Rights owner'),
+		'#default_value' => media_mediahaven_variable_get('rights_owner',MEDIA_MEDIAHAVEN_RIGHTS_OWNER),
+		'#size' => 50,
+		'#description' => t('The rights owner for media uploaded to Mediahaven.'),
+		'#required' => TRUE,
+	);
+	$form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Rights'),
+		'#default_value' => media_mediahaven_variable_get('rights',MEDIA_MEDIAHAVEN_RIGHTS),
+		'#size' => 50,
+		'#description' => t('The rights for using and ditributing the uploaded media.'),
+		'#required' => TRUE,
+	);
+	$form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('copyright')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Copyright Notice'),
+		'#default_value' => media_mediahaven_variable_get('copyright',MEDIA_MEDIAHAVEN_COPYRIGHT_NOTICE),
+		'#size' => 50,
+		'#description' => t('Copyright notice for media uploaded to Mediahaven.'),
+		'#required' => TRUE,
+	);
+
+	
 	//third form to store the thumbnail settings: dimensions
 	$form['media_mediahaven_thumbnail_settings'] = array(
 	  '#type' => 'fieldset',

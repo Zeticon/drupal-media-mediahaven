@@ -11,8 +11,6 @@ function media_mediahaven_upload($form, &$form_state = array(), $redirect = NULL
       '#collapsible' => TRUE,
   );
 
-
-
   if (module_exists('plupload')) {
     $form['upload']['uploaded_file'] = array(
         '#type' => 'plupload',
@@ -80,13 +78,14 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
     if ($uploaded_file['status'] == 'done') {
       $source = $uploaded_file['tmppath'];
       $destination =  file_directory_temp() . '/' . $uploaded_file['name'];
-	  print_r($destination);
+
       drupal_set_message('current path '. $source);
       drupal_set_message('new path '. $destination);
 
       $destination = file_unmanaged_move($source, $destination);
 
       $metadata = _build_metadata($form_state['values']);
+		
       $metadata_file = substr($destination, 0, strrpos($destination, '.')) . '.xml';
       media_mediahaven_generate_metadata($metadata_file, $metadata);
 
@@ -95,12 +94,13 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       $result = $rest_client->upload($destination, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
 
       //clean up
-      file_unmanaged_delete($destination);
-      //file_unmanaged_delete($metadata_file);
+	file_unmanaged_delete($destination);
+	file_unmanaged_delete($metadata_file);
 
       if (!$result) {
         drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
       } else {
+	  print_r($result);
         //manage file within drupal
         media_mediahaven_file_save(json_decode($result, TRUE));
       }

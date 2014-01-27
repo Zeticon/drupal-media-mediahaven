@@ -62,13 +62,23 @@ class MediaHavenRestClient {
   }
 
   public function upload($media_file, $metadata_file, $ingestspace_id) {
-    $this->options[CURLOPT_URL] = $this->base_rest_url. '/media';
-    $this->options[CURLOPT_POST] = 1;
-    $this->options[CURLOPT_POSTFIELDS] = array(
+	if(media_mediahaven_variable_get('autopublish')==1)
+	{
+		$autopublish = 'true';
+	} else {
+		$autopublish = 'false';
+	}
+	
+	$upload_settings = array(
         'file' => '@' . $media_file .';filename=' . substr($media_file, strrpos($media_file, '/')+1),
         'metadata' => '@' . $metadata_file,
         'ingestSpaceId' => $ingestspace_id,
+		'autoPublish' => $autopublish,
     );
+	
+    $this->options[CURLOPT_URL] = $this->base_rest_url. '/media';
+    $this->options[CURLOPT_POST] = 1;
+    $this->options[CURLOPT_POSTFIELDS] = $upload_settings;
 
    drupal_set_message(serialize($this->options[CURLOPT_POSTFIELDS]));
    //file_unmanaged_copy($metadata_file, $metadata_file .'bck');
