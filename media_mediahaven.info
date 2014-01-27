@@ -10,7 +10,6 @@ dependencies[] = file_styles
 dependencies[] = media_internet
 dependencies[] = plupload
 
-files[] = media_mediahaven.module
 files[] = includes/MediaHavenRestClient.inc
 files[] = includes/media_mediahaven.admin.inc
 files[] = includes/media_mediahaven.upload.inc
