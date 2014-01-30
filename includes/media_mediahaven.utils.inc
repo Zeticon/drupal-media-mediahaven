@@ -3,6 +3,7 @@
  * Save a mediahaven media file into drupal
 */
 function media_mediahaven_file_save($media_data) {
+
   $uri = file_stream_wrapper_uri_normalize("mediahaven://f/".$media_data['fragmentId']);
   drupal_set_message('uri to save '.$uri);
   $file = file_uri_to_object($uri, TRUE);
@@ -12,11 +13,19 @@ function media_mediahaven_file_save($media_data) {
   } elseif($media_data['type']=='Video')
   {
     $file->filemime = 'video/mp4';
+  } else 
+  {
+	 $file->filemime = file_get_mimetype($media_data['original_filename']);
   }
-
-  //$file->filemime = file_get_mimetype($uri);
+  
   $file->filesize = @filesize($uri);
-  $file->filename = $media_data['title'];
+  if($media_data['title']=='provided title')
+  {
+	 $file->filename = $media_data['original_filename'];
+  } else {
+	 $file->filename = $media_data['title'];
+  }
+ 
 
   if ($file === FALSE) {
     drupal_set_message(t('An error occurred and no file was saved.'), 'error');

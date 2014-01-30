@@ -93,16 +93,17 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       $rest_client = _get_mediahaven_rest_client();
       $result = $rest_client->upload($destination, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
 
-      //clean up
+	//clean up
 	file_unmanaged_delete($destination);
 	file_unmanaged_delete($metadata_file);
 
       if (!$result) {
         drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
       } else {
-	  print_r($result);
+		$result = json_decode($result, TRUE);
+		$result['original_filename'] = $uploaded_file['name'];
         //manage file within drupal
-        media_mediahaven_file_save(json_decode($result, TRUE));
+        media_mediahaven_file_save($result);
       }
     } else {
       drupal_set_message(t('No uploaded files were provided'));
