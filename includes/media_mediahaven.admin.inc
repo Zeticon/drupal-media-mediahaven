@@ -30,7 +30,7 @@ function _generate_search($state)
 {
 	$data = array(
 		'#type' => 'fieldset',
-		'#title' => t('Search in Mediahaven'),
+		#'#title' => t('Search in Mediahaven'),
 	);
 
 	// used search string
@@ -269,7 +269,7 @@ function _generate_result_current($media_item) {
 	$variables['path'] = $media_item['previewImagePath'];
 	$variables['width'] = media_mediahaven_variable_get('thumb_width');
 	$variables['height'] = media_mediahaven_variable_get('thumb_height');
-	
+
 	//return theme('image', $variables);
 	//current_path() . '?uuid=
 	return l('<img width="' . $variables['width'] . '" height="' . $variables['height'] . '" src="' . $media_item['previewImagePath'] . '"/>'

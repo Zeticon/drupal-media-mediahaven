@@ -264,7 +264,7 @@ function media_mediahaven_form($form, &$form_state) {
           This will be used when autopublishing is enabled'),
       '#required' => TRUE,
   );
-		
+
 	$form['media_mediahaven_rights_settings'] = array(
 	  '#type' => 'fieldset',
 	  '#title' => t('MediaHaven Rights settings'),
@@ -299,7 +299,7 @@ function media_mediahaven_form($form, &$form_state) {
 		'#required' => TRUE,
 	);
 
-	
+
 	//third form to store the thumbnail settings: dimensions
 	$form['media_mediahaven_thumbnail_settings'] = array(
 	  '#type' => 'fieldset',
@@ -325,7 +325,7 @@ function media_mediahaven_form($form, &$form_state) {
 		'#description' => t('Height of the thumbnails (in px)'),
 		'#required' => TRUE,
 	);
-  
+
   return system_settings_form($form);
 }
 
@@ -349,7 +349,7 @@ function media_mediahaven_form_validate($form, &$form_state){
 			form_set_error('media_mediahaven__ingestspace_id', t('Ingestspace id is not a valid uuid.'));
 		}
 	}
-	
+
 	//if($form_state['input']['media_mediahaven__department_id'])
 	$form_state['values']['media_mediahaven__department_id'] = trim($form_state['values']['media_mediahaven__department_id']);
 	if($form_state['values']['media_mediahaven__department_id'])
@@ -367,7 +367,7 @@ function media_mediahaven_form_validate($form, &$form_state){
 function validate_uuid($uuid = FALSE)
 {
 	if($uuid === FALSE) return FALSE;
-	 
+
 	if (preg_match('/^\{?[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}\}?$/', $uuid)) {
 		return TRUE;
 	} else {
@@ -444,7 +444,7 @@ function media_mediahaven_form_file_entity_edit_alter(&$form, $form_state) {
 	{
 		$preview = media_mediahaven_get_thumbnail_preview($file, TRUE);
 		$form['preview'] = $preview;
-	}	
+	}
 	return;
 }
 
@@ -454,11 +454,11 @@ function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state)
     // We don't want to be messing with it in this case.
     return;
   }
-  
+
   $path = drupal_get_path('module', 'media_mediahaven');
-    
+
   if (arg(3) == 'thumbnails') {
-	
+
 	if (empty($form['admin']['files'])) {
       // Display empty text if there are no files.
       $form['admin']['files'] = array(
@@ -472,7 +472,7 @@ function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state)
 			'#prefix' => '<div class="media-display-thumbnails media-clear clearfix"><ul id="media-browser-library-list" class="media-list-thumbnails">',
 			'#suffix' => '</ul></div>',
 		);
-		
+
 		foreach ($files as $file) {
 			if(strstr($file->uri, 'mediahaven://'))
 			{
@@ -487,10 +487,20 @@ function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state)
 				  '#suffix' => '</li>',
 				);
 		}
-		
+
 	}
   }
-  
+
+function media_mediahaven_media_browser_plugin_info() {
+  $info['mediahaven'] = array(
+    'title' => t('MediaHaven'),
+    'class' => 'MediaMediaHavenBrowser',
+     'file' => 'includes/media_mediahaven.admin.inc',
+  );
+
+  return $info;
+}
+
 }
 
 function media_mediahaven_get_thumbnail_preview($file, $link = NULL) {
@@ -500,7 +510,7 @@ function media_mediahaven_get_thumbnail_preview($file, $link = NULL) {
   }
   // @todo should CSS be attached to the form element here?
   // $element['#attached']['css'][] = drupal_get_path('module', 'media') . '/css/media.css';
-  
+
 	$preview = file_view_file($file, 'preview');
 	$preview['#show_names'] = TRUE;
 	$preview['#add_link'] = $link;
