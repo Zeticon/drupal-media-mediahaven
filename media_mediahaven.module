@@ -396,7 +396,7 @@ function media_mediahaven_media_browser_plugin_info() {
       'title' => t('MediaHaven'),
       'class' => 'MediaMediaHavenBrowser',
   );
-
+	
   return $info;
 }
 
@@ -490,17 +490,6 @@ function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state)
 
 	}
   }
-
-function media_mediahaven_media_browser_plugin_info() {
-  $info['mediahaven'] = array(
-    'title' => t('MediaHaven'),
-    'class' => 'MediaMediaHavenBrowser',
-     'file' => 'includes/media_mediahaven.admin.inc',
-  );
-
-  return $info;
-}
-
 }
 
 function media_mediahaven_get_thumbnail_preview($file, $link = NULL) {
