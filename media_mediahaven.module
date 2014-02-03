@@ -388,8 +388,6 @@ function media_mediahaven_permission() {
 
 /**
  * Implements hook_media_browser_plugin_info().
- *
-
  */
 function media_mediahaven_media_browser_plugin_info() {
   $info['mediahaven'] = array(

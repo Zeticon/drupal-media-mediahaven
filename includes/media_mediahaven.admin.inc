@@ -80,7 +80,7 @@ function _get_search_string($state)
 	//} elseif (isset($_POST['search'])) {
 	//	$search = $_POST['search'];
 	} elseif (isset($_GET['search'])) {
-		$search = $_GET['search'];
+		$search = check_plain(filter_xss($_GET['search']));
 	}
 	return $search;
 }
@@ -94,7 +94,7 @@ function _get_selected_facets($state)
 		return $selected_facets;
 	}
 
-	if(isset($_GET['fa'])) $selected_facets = (array)$_GET['fa'];
+	if(isset($_GET['fa'])) $selected_facets = (array)filter_xss($_GET['fa']);
 
 	return $selected_facets;
 }
@@ -200,7 +200,7 @@ function _get_search_results($search,$selected_facets)
 
 	if(isset($_GET['page']))
 	{
-		$current_page = (int)$_GET['page'];
+		$current_page = (int)filter_xss($_GET['page']);
 		$startIndex = $current_page * $nrOfResults;
 	}
 
@@ -282,7 +282,7 @@ function _generate_result_current($media_item) {
 
 function _generate_pager($num_results, $element = 0, $parameters = array()) {
 	//zoekwaard uit link overschrijven met search
-	if(isset($_POST['search'])) $_GET['search'] = $_POST['search'];
+	if(isset($_POST['search'])) $_GET['search'] = filter_xss(check_plain($_POST['search']));
 
 	pager_default_initialize($num_results, MEDIA_MEDIAHAVEN_PAGER, $element);
 	return array('#markup' => theme('pager', array('parameters' => $parameters, 'element' => $element)));
