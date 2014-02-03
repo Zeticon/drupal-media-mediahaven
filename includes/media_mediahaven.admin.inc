@@ -37,7 +37,8 @@ function _generate_search($state)
 	$search = _get_search_string($state);
 	// selected facets
 	$selected_facets = _get_selected_facets($state);
-
+	$facets_output = _parse_selected_facets($selected_facets);
+	
 	$facets = _get_search_facets($selected_facets, $search);
 
 	// search results
@@ -48,7 +49,9 @@ function _generate_search($state)
 		'#title' => 'Search',
 		'#default_value' => $search !== null ? $search : ''
 	);
-
+	
+	$data['selected_facets'] = $facets_output;
+	
 	$data['facets'] = _generate_facets($facets);
 
 	$data['button'] = array(
@@ -128,6 +131,35 @@ function _get_search_facets($selected_facets, $search_term)
 	}
 }
 
+function _parse_selected_facets($selected_facets)
+{
+	if(!$selected_facets) return FALSE;
+	if(!$selected_facets[0]) return FALSE;
+	
+	$pattern = '/\+dtag\:\"root>([A-Za-z0-9 ]*)>([A-Za-z0-9 ]*)\"/';
+	preg_match_all($pattern, $selected_facets[0], $matches);
+	
+	if(!empty($matches))
+	{
+		$selected_facet_list = array(
+			'#theme' => 'item_list',
+			'#type' => 'ul',
+			'#title' => t('Selected Facets'),
+			'#attributes' => array('class' => 'selected_facet_list'),
+		);
+		
+		foreach($matches[0] as $key => $match)
+		{
+			$selected_facet_list['#items'][] = $matches[1][$key] . ' > ' . $matches[2][$key];
+		}
+		
+		return $selected_facet_list;
+	
+	}
+	
+	return FALSE;
+}
+
 function _generate_facets($facets)
 {
 	if(empty($facets)) return array();
@@ -140,6 +172,7 @@ function _generate_facets($facets)
 	$facets_list = array(
 		'#theme' => 'item_list',
 		'#type' => 'ul',
+		'#title' => t('Selectable Facets'),
 		'#attributes' => array('class' => 'facet_list'),
 	);
 
