@@ -94,7 +94,7 @@ function _get_selected_facets($state)
 		return $selected_facets;
 	}
 
-	if(isset($_GET['fa'])) $selected_facets = (array)filter_xss($_GET['fa']);
+	if(isset($_GET['fa'])) $selected_facets = (array)$_GET['fa'];
 
 	return $selected_facets;
 }
@@ -106,7 +106,7 @@ function _get_search_facets($selected_facets, $search_term)
 	{
 		$full_query .= $selected_facet;
 	}
-
+	
 	if (isset($search_term) && strlen($search_term)>0) {
 		if (strlen($full_query) > 0) {
 			$full_query .= ' ';
@@ -182,14 +182,14 @@ function _generate_facets_link($facets)
 
 function parse_facet_link($query)
 {
-	$query = str_replace(' +(dtag:"root")','',$query);
-	$r = explode('+(', $query);
-
-	if (isset($r[1])){
-		$r[1] = substr(trim($r[1]),0,-1);
-		return urlencode(trim($r[0])) . '&search=' . $r[1];
-	}
-	return urlencode(trim($r[0]));
+	$pattern = '/\+\([A-Za-z0-9 ]*\)/';
+	preg_match($pattern, $query, $matches);
+	$query = urlencode($query);
+	if(!empty($matches))
+	{
+		$query = $query . '&search=' . substr(trim($matches[0]),2,-1);
+	}	
+	return $query;
 }
 
 function _get_search_results($search,$selected_facets)
