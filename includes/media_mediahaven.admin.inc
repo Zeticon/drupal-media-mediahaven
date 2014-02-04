@@ -14,6 +14,8 @@ function _get_mediahaven_rest_client() {
 
 function media_mediahaven_add($form, &$form_state = array(), $redirect = NULL)
 {
+	module_load_include('inc', 'media', 'includes/media.browser');
+	
 	$uuid = _get_parameter($_GET, 'uuid');
 
 	if ($uuid !== null) {
