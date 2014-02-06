@@ -268,17 +268,6 @@ function _generate_results($results)
 	if(isset($results['startIndex'])) unset($results['startIndex']);
 	$results = $results['mediaDataList'];
 
-	//[mediaObjectId] => string
-	//[title] => string
-	//[description] => text
-	//[date] => datetime
-	//[previewImagePath] => string
-	//[thumbnailImagePath] => string
-	//[videoPath] => string
-	//[keywords] => array
-	//[type] => string
-	//[authors] => array
-
 	$output = array(
 		'#theme' => 'item_list',
 		'#type' => 'ul',

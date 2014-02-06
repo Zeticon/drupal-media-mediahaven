@@ -10,6 +10,8 @@
 include_once dirname(__FILE__) . '/includes/media_mediahaven.variables.inc';
 include_once dirname(__FILE__) . '/includes/media_mediahaven.utils.inc';
 
+// Hooks and callbacks for integrating with File Entity module for display.
+require_once dirname(__FILE__) . '/includes/media_mediahaven.formatters.inc';
 drupal_add_css(drupal_get_path('module', 'media_mediahaven') . '/media_mediahaven.css');
 
 /**
@@ -438,12 +440,12 @@ function _media_mediahaven_page() {
  * checkboxes and table with thumbnails.
  */
 function media_mediahaven_form_file_entity_edit_alter(&$form, $form_state) {
-	$file = $form['preview']['#file'];
+	/*$file = $form['preview']['#file'];
 	if(strstr($file->uri, 'mediahaven://'))
 	{
 		$preview = media_mediahaven_get_thumbnail_preview($file, TRUE);
 		$form['preview'] = $preview;
-	}
+	}*/
 	return;
 }
 

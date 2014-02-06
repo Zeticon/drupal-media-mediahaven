@@ -45,7 +45,9 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
 
   function getOriginalThumbnailPath() {
     $parts = $this->get_parameters();
-    return url( media_mediahaven_variable_get('url') . '/index.php/embed/image?img=' . $parts['f']);
+	$thumb_width = media_mediahaven_variable_get('thumb_width');
+	$thumb_height = media_mediahaven_variable_get('thumb_height');
+    return 'http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=' . $parts['f'] . '&w=' . $thumb_width . '&h=' . $thumb_height;
   }
 
   function getLocalThumbnailPath() {
