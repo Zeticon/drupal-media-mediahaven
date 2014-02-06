@@ -632,10 +632,6 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   // Add media browser javascript and CSS.
   drupal_add_js(drupal_get_path('module', 'media_mediahaven') . '/js/media-mediahaven.browser.js');
 
-  // @TODO: Remove deprecated library js and css. They're removed in Media,
-  // so let's comment out for now.
-  // drupal_add_js(drupal_get_path('module', 'media') . '/js/plugins/media.library.js');
-  // drupal_add_css(drupal_get_path('module', 'media') . '/js/plugins/media.library.css');
 
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
