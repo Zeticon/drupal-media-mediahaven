@@ -33,6 +33,7 @@ class MediaHavenRestClient {
   }
 
   public function search($query, $startIndex, $nrOfResults){
+    $query .= '+(MediaObjectType:Video) +(MediaObjectType:Image)';
 	$query = urlencode($query);
 
     $url = $this->base_rest_url. '/media?q=' . $query;
@@ -68,14 +69,14 @@ class MediaHavenRestClient {
 	} else {
 		$autopublish = 'false';
 	}
-	
+
 	$upload_settings = array(
         'file' => '@' . $media_file .';filename=' . substr($media_file, strrpos($media_file, '/')+1),
         'metadata' => '@' . $metadata_file,
         'ingestSpaceId' => $ingestspace_id,
 		'autoPublish' => $autopublish,
     );
-	
+
     $this->options[CURLOPT_URL] = $this->base_rest_url. '/media';
     $this->options[CURLOPT_POST] = 1;
     $this->options[CURLOPT_POSTFIELDS] = $upload_settings;

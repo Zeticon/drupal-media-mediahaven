@@ -13,11 +13,11 @@ function media_mediahaven_file_save($media_data) {
   } elseif($media_data['type']=='Video')
   {
     $file->filemime = 'video/mp4';
-  } else 
+  } else
   {
 	 $file->filemime = file_get_mimetype($media_data['original_filename']);
   }
-  
+
   $file->filesize = @filesize($uri);
   if($media_data['title']=='provided title')
   {
@@ -25,7 +25,7 @@ function media_mediahaven_file_save($media_data) {
   } else {
 	 $file->filename = $media_data['title'];
   }
- 
+
 
   if ($file === FALSE) {
     drupal_set_message(t('An error occurred and no file was saved.'), 'error');
@@ -67,10 +67,10 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
   }
 	$xml->MDProperties[0]->applicatie_gebruiker = $application_user;
 	$xml->MDProperties[0]->rights_owner = media_mediahaven_variable_get('rights_owner');
-	$xml->MDProperties[0]->rights = media_mediahaven_variable_get('rights');  
+	$xml->MDProperties[0]->rights = media_mediahaven_variable_get('rights');
 	$xml->MDProperties[0]->copyright_notice = media_mediahaven_variable_get('copyright');
 
-  
+
   if(!empty($metadata['title'])) {
     $xml->title = $metadata['title'];
   }
@@ -79,7 +79,7 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
     $xml->description = $metadata['description'];
   }
 
-  
+
 
   if (!empty($metadata['keywords'])) {
     foreach ($metadata['keywords'] as $keyword) {
@@ -90,4 +90,48 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
     }
   }
   $xml->asXML($metadata_file);
+}
+
+function get_mediahaven_rest_client() {
+  return new MediaHavenRestClient(media_mediahaven_variable_get('url') . MEDIA_MEDIAHAVEN_RESTPOINT,
+      media_mediahaven_variable_get('login'),
+      media_mediahaven_variable_get('password'));
+}
+
+function media_mediahaven_mediadata_to_file($media_data) {
+	// Check database for this uri
+	$fragment_id = $media_data['fragmentId'];
+	$uri = file_stream_wrapper_uri_normalize("mediahaven://f/$fragment_id");
+	$file = file_uri_to_object($uri, TRUE);
+
+	if($media_data['type']=='Image')
+	{
+		$file->filemime = 'image/mediahaven';
+		$file->type = 'image';
+	} elseif($media_data['type']=='Video')
+	{
+		$file->filemime = 'video/mediahaven';
+		$file->type = 'video';
+	} else {
+	    $file->filemime = 'todo';
+	    $file->type = 'image';
+	}
+
+	//$file->filemime = file_get_mimetype($uri);
+	$file->filesize = @filesize($uri);
+	$file->filename = $media_data['title'];
+	return $file;
+}
+
+function media_mediahaven_uri_parse_fragmentid($uri){
+  $target = file_uri_target($uri);
+     $parts = explode('/', $target);
+     $index = 0;
+     $fragment_id = '';
+     foreach ($parts as $part) {
+       if ($part == 'f') {
+         return $parts[++$index];
+       }
+       $index++;
+     }
 }

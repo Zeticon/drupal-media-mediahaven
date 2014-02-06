@@ -6,30 +6,25 @@
 include_once ('MediaHavenRestClient.inc');
 include_once ('media_mediahaven.variables.inc');
 
-function _get_mediahaven_rest_client() {
-  return new MediaHavenRestClient(media_mediahaven_variable_get('url') . MEDIA_MEDIAHAVEN_RESTPOINT,
-      media_mediahaven_variable_get('login'),
-      media_mediahaven_variable_get('password'));
-}
 
 function media_mediahaven_add($form, &$form_state = array(), $redirect = NULL)
 {
 	module_load_include('inc', 'media', 'includes/media.browser');
-	
+
 	$uuid = _get_parameter($_GET, 'uuid');
 
 	if ($uuid !== null) {
 		_submit_mob($form, $form_state);
 		return;
 	}
-	
+
 	$files = array();
 	// Add the files to JS so that they are accessible inside the browser
 	drupal_add_js(array('media' => array('files' => $files)), 'setting');
 
 	// Add media browser javascript and CSS.
 	drupal_add_js(drupal_get_path('module', 'media_mediahaven') . '/js/media-mediahaven.browser.js');
-  
+
 	$data['mediahaven_search'] = _generate_search($form_state);
 
 	return array('mediahaven' => $data);
@@ -47,7 +42,7 @@ function _generate_search($state)
 	// selected facets
 	$selected_facets = _get_selected_facets($state);
 	$facets_output = _parse_selected_facets($selected_facets);
-	
+
 	$facets = _get_search_facets($selected_facets, $search);
 
 	// search results
@@ -58,9 +53,9 @@ function _generate_search($state)
 		'#title' => 'Search',
 		'#default_value' => $search !== null ? $search : ''
 	);
-	
+
 	$data['selected_facets'] = $facets_output;
-	
+
 	$data['facets'] = _generate_facets($facets);
 
 	$data['button'] = array(
@@ -118,7 +113,7 @@ function _get_search_facets($selected_facets, $search_term)
 	{
 		$full_query .= $selected_facet;
 	}
-	
+
 	if (isset($search_term) && strlen($search_term)>0) {
 		if (strlen($full_query) > 0) {
 			$full_query .= ' ';
@@ -126,7 +121,7 @@ function _get_search_facets($selected_facets, $search_term)
 		$full_query .= '+(' . $search_term . ')';
 	}
 
-    $rest_client = _get_mediahaven_rest_client();
+    $rest_client = get_mediahaven_rest_client();
 	$result = $rest_client->getFacets($full_query);
 
 	$arr_facets_json = json_decode($result, TRUE);
@@ -144,10 +139,10 @@ function _parse_selected_facets($selected_facets)
 {
 	if(!$selected_facets) return FALSE;
 	if(!$selected_facets[0]) return FALSE;
-	
+
 	$pattern = '/\+dtag\:\"root>([A-Za-z0-9 ]*)>([A-Za-z0-9 ]*)\"/';
 	preg_match_all($pattern, $selected_facets[0], $matches);
-	
+
 	if(!empty($matches))
 	{
 		$selected_facet_list = array(
@@ -156,16 +151,16 @@ function _parse_selected_facets($selected_facets)
 			'#title' => t('Selected Facets'),
 			'#attributes' => array('class' => 'selected_facet_list'),
 		);
-		
+
 		foreach($matches[0] as $key => $match)
 		{
 			$selected_facet_list['#items'][] = $matches[1][$key] . ' > ' . $matches[2][$key];
 		}
-		
+
 		return $selected_facet_list;
-	
+
 	}
-	
+
 	return FALSE;
 }
 
@@ -230,7 +225,7 @@ function parse_facet_link($query)
 	if(!empty($matches))
 	{
 		$query = $query . '&search=' . substr(trim($matches[0]),2,-1);
-	}	
+	}
 	return $query;
 }
 
@@ -255,7 +250,7 @@ function _get_search_results($search,$selected_facets)
 		}
 	}
 
-	$rest_client = _get_mediahaven_rest_client();
+	$rest_client = get_mediahaven_rest_client();
 	$result = $rest_client->search($query, $startIndex, $nrOfResults);
 
 	if ($result) {
@@ -340,7 +335,7 @@ function _submit_mob(&$form, &$form_state) {
 
 	// alle info van het mediaobject ophalen
 
-	$rest_client = _get_mediahaven_rest_client();
+	$rest_client = get_mediahaven_rest_client();
 	$result = $rest_client->getMediaObject($uuid);
 
 	if ($result) {
@@ -370,14 +365,14 @@ function _submit_mob(&$form, &$form_state) {
 		$redirect = "media_mediahaven_add";
 	} elseif (!property_exists($file, 'fid')) {
 		$file = file_save($file);
-		
+
 		if (module_exists('overlay') && path_is_admin($_GET['q'])) {
 		// The overlay is visualized.
 
 		} else {
 			$redirect = "media/{$file->fid}/edit";
 		}
-		
+
 
 		// I do not understand the block below
 		field_attach_submit('media', $file, $form, $form_state);

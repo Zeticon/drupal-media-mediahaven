@@ -90,7 +90,7 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       media_mediahaven_generate_metadata($metadata_file, $metadata);
 
       //upload the file to mediahaven
-      $rest_client = _get_mediahaven_rest_client();
+      $rest_client = get_mediahaven_rest_client();
       $result = $rest_client->upload($destination, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
 
 	//clean up

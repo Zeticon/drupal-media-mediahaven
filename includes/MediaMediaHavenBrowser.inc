@@ -26,7 +26,7 @@ class MediaMediaHavenBrowser extends MediaBrowserPlugin {
 
     // Check if the user is able to add remote media.
    // if (user_access('add media from remote sources')) {
-      $build['form'] = drupal_get_form('media_mediahaven_add', $this->params['types'], $this->params['multiselect']);
+      $build['form'] = drupal_get_form('media_mediahaven_browser_add', $this->params['types'], $this->params['multiselect']);
       return $build;
   //  }
   }
