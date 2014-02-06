@@ -23,13 +23,13 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
    * here in case that example is redefined or removed.
    */
   function interpolateUrl() {
-	
+
     $this->base_url =  media_mediahaven_variable_get('url');
-		  
+
+    //TODO we should make a different url for video
 	if ($parameters = $this->get_parameters()) {
-		return  'http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=' . $parameters['f'];
-		
-      //return $this->base_url . 'index.php/embed/?' . http_build_query($parameters);
+		return  $this->base_url . '/index.php/embed/image?img=' . $parameters['f'];
+
     } else {
 		return FALSE;
 	}
@@ -45,13 +45,13 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
 
   function getOriginalThumbnailPath() {
     $parts = $this->get_parameters();
-#    return 'http://todo/vi/' . check_plain($parts['v']) . '/0.jpg';
-    return 'http://10.10.3.140/beeldbanktuur/index.php/embed/image?img=' . $parts['f'];
+    return url( media_mediahaven_variable_get('url') . '/index.php/embed/image?img=' . $parts['f']);
   }
 
   function getLocalThumbnailPath() {
     $parts = $this->get_parameters();
-    $local_path = file_default_scheme() . '://todo/' . check_plain($parts['v']) . '.jpg';
+
+    $local_path = file_default_scheme() . '://todo/' . check_plain($parts['f']) . '.jpg';
     if (!file_exists($local_path)) {
       $dirname = drupal_dirname($local_path);
       file_prepare_directory($dirname, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
