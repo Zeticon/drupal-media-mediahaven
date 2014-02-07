@@ -11,6 +11,7 @@
  */
 function media_mediahaven_file_formatter_info_alter(&$info)
 {
+
 	$info['file_image'] = array(
 		'label' => t('Mediahaven Preview Image'),
 		'file types' => array('image'),
@@ -38,6 +39,19 @@ function media_mediahaven_file_formatter_info_alter(&$info)
 	  //[file_field_styles_file_medium]
 	  //[file_field_styles_file_original]
 	  //[file_image]
+	  
+	  $info['file_field_file_video'] = array(
+		'label' => t('Mediahaven Preview Image'),
+		'file types' => array('video'),
+		'default settings' => array(
+		  'image_style' => '',
+		),
+		'view callback' => 'media_mediahaven_file_formatter_image_view',
+		'settings callback' => 'media_mediahaven_file_formatter_image_settings',
+		'mime types' => array('video/mp4','video/mediahaven'),
+	  );
+	  
+	  
 	  $info['file_field_media_large_icon'] = array(
 		'label' => t('Mediahaven Preview Image'),
 		'file types' => array('video'),
@@ -51,6 +65,7 @@ function media_mediahaven_file_formatter_info_alter(&$info)
 	
 	return $info;	
 }
+
 
 function media_mediahaven_file_formatter_image_view($file, $display, $langcode) {
   $scheme = file_uri_scheme($file->uri);
