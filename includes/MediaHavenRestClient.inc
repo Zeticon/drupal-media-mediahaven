@@ -90,7 +90,7 @@ class MediaHavenRestClient {
     $this->options[CURLOPT_POST] = 1;
     $this->options[CURLOPT_POSTFIELDS] = $upload_settings;
 
-   drupal_set_message(serialize($this->options[CURLOPT_POSTFIELDS]));
+   //drupal_set_message(serialize($this->options[CURLOPT_POSTFIELDS]));
    //file_unmanaged_copy($metadata_file, $metadata_file .'bck');
    return $this->execute();
   }

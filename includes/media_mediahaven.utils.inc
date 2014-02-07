@@ -5,7 +5,7 @@
 function media_mediahaven_file_save($media_data) {
 
   $uri = file_stream_wrapper_uri_normalize("mediahaven://f/".$media_data['fragmentId']);
-  drupal_set_message('uri to save '.$uri);
+  //drupal_set_message('uri to save '.$uri);
   $file = file_uri_to_object($uri, TRUE);
   if($media_data['type']=='Image')
   {
