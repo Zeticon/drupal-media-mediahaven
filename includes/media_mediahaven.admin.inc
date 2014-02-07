@@ -241,7 +241,7 @@ function _get_search_results($search,$selected_facets)
 		$startIndex = $current_page * $nrOfResults;
 	}
 
-	if($search!='') $query = '+(' . $search . ')';
+    $query = $search;
 
 	if (isset($selected_facets)) {
 		foreach($selected_facets as $selected_facet)

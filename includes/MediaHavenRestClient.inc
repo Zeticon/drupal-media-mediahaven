@@ -5,6 +5,7 @@ class MediaHavenRestClient {
   public $base_rest_url;
   private $options = array();
   private $error = '';
+ const SUPPORTED_MEDIATYPES_QUERY = '+(MediaObjectType:Video OR MediaObjectType:Image)';
 
   function __construct($base_rest_url, $login, $password) {
     $this->base_rest_url = $base_rest_url;
@@ -33,7 +34,12 @@ class MediaHavenRestClient {
   }
 
   public function search($query, $startIndex, $nrOfResults){
-    $query .= '+(MediaObjectType:Video) +(MediaObjectType:Image)';
+    if($query!='') {
+      $query = '+(' . $query . ') ';
+    }
+    if (strpos($query, self::SUPPORTED_MEDIATYPES_QUERY) == FALSE) {
+      $query .= self::SUPPORTED_MEDIATYPES_QUERY;
+    }
 	$query = urlencode($query);
 
     $url = $this->base_rest_url. '/media?q=' . $query;
@@ -57,6 +63,9 @@ class MediaHavenRestClient {
   }
 
   public function getFacets($query) {
+    if (strpos($query, self::SUPPORTED_MEDIATYPES_QUERY) == FALSE) {
+      $query .= self::SUPPORTED_MEDIATYPES_QUERY;
+    }
     $this->options[CURLOPT_URL] = $this->base_rest_url. '/facets?q=' . urlencode($query);
     //drupal_set_message('----> ' . $this->options[CURLOPT_URL]);
     return $this->execute();
