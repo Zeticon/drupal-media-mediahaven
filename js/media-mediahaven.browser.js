@@ -63,7 +63,7 @@
         // Get the file from the settings which was stored in
         // template_preprocess_media_views_view_media_browser()
         var file = Drupal.settings.media.files[uri];
-        alert(JSON.stringify(file, null, 4));
+        //alert(JSON.stringify(file, null, 4));
         var files = new Array();
         files.push(file);
         Drupal.media.browser.selectMedia(files);

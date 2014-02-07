@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @file media_youtube/includes/media_youtube.formatters.inc
+ * @file media_mediahaven/includes/media_mediahaven.formatters.inc
  *
- * Formatters for Media: YouTube.
+ * Formatters for Media: Mediahaven.
  */
 
 /**
@@ -31,7 +31,25 @@ function media_mediahaven_file_formatter_info_alter(&$info)
 		'settings callback' => 'media_mediahaven_file_formatter_image_settings',
 		'mime types' => array('image/jpeg','image/mediahaven'),
 	  );
-	return $info;
+	  //[file_field_media_large_icon]
+	  //[file_field_styles_file_square_thumbnail]
+	  //[file_field_styles_file_thumbnail]
+	  //[file_field_styles_file_large]
+	  //[file_field_styles_file_medium]
+	  //[file_field_styles_file_original]
+	  //[file_image]
+	  $info['file_field_media_large_icon'] = array(
+		'label' => t('Mediahaven Preview Image'),
+		'file types' => array('video'),
+		'default settings' => array(
+		  'image_style' => '',
+		),
+		'view callback' => 'media_mediahaven_file_formatter_image_view',
+		'settings callback' => 'media_mediahaven_file_formatter_image_settings',
+		'mime types' => array('video/mp4','video/mediahaven'),
+	  );
+	
+	return $info;	
 }
 
 function media_mediahaven_file_formatter_image_view($file, $display, $langcode) {
@@ -48,6 +66,7 @@ function media_mediahaven_file_formatter_image_view($file, $display, $langcode) 
         '#theme' => 'image',
         '#path' => $wrapper->getOriginalThumbnailPath(),
         '#alt' => isset($file->override['attributes']['alt']) ? $file->override['attributes']['alt'] : $file->filename,
+		'#suffix' => '<span class="media_object_type_' . ucfirst($file->type) . '">' . ucfirst($file->type) . '</span>',
       );
     }
     else {
@@ -57,6 +76,7 @@ function media_mediahaven_file_formatter_image_view($file, $display, $langcode) 
         '#style_name' => $image_style,*/
         '#path' => $wrapper->getOriginalThumbnailPath(),
         '#alt' => isset($file->override['attributes']['alt']) ? $file->override['attributes']['alt'] : $file->filename,
+		'#suffix' => '<span class="media_object_type_' . ucfirst($file->type) . '">' . ucfirst($file->type) . '</span>',
       );
     }
 
