@@ -509,9 +509,12 @@ function media_mediahaven_get_thumbnail_preview($file, $link = NULL) {
 	return $preview;
 }
 
-function media_mediahaven_theme() {
+/**
+ * Implements hook_theme().
+ */
+function media_mediahaven_theme($existing, $type, $theme, $path) {
   return array(
-    // The default media file list form element.
+   // The default media file list form element.
     'media_file_list' => array(
       'variables' => array('element' => NULL),
     ),
@@ -522,6 +525,12 @@ function media_mediahaven_theme() {
       'file' => 'includes/media_mediahaven.theme.inc',
     ),
 
+	'media_mediahaven_video' => array(
+      'variables' => array('uri' => NULL, 'options' => array()),
+      'file' => 'media_mediahaven.theme.inc',
+      'path' => $path . '/includes',
+      'template' => 'media-mediahaven-video',
+    ),
   );
 }
 

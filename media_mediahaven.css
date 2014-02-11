@@ -11,6 +11,14 @@
 .media_object_type_Audio {background:#CCCCCC;top:0px;left:0px;position:absolute;padding:2px 5px;}
 .media_object_type_Image {display:none;visibility:hidden;}
 
+#file-entity-edit  .media_object_type_Video, 
+#file-entity-edit  .media_object_type_Audio, 
+#file-entity-edit  .media_object_type_Image {
+	display:none;visibility:hidden;
+}
+
 #media-browser-library-list  li {display:inline-block;margin:5px;position:relative;}
 #container #scrollbox {padding-top:10px;clear:both;}
 #edit-actions {padding-top:10px;clear:both;}
+
+.media_object_wrapper {position:relative;}

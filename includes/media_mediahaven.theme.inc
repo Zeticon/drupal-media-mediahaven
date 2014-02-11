@@ -68,3 +68,16 @@ function theme_media_mediahaven_thumbnail($variables) {
   $output .= $label . $suffix;
   return $output;
 }
+
+/**
+ * Preprocess function for theme('media_mediahaven_video').
+ */
+function media_mediahaven_preprocess_media_mediahaven_video(&$variables) {
+	$umid = substr(strrchr($variables['uri'], "/"), 1);
+	$variables['umid'] = $umid;
+
+	$variables['mediahaven_url'] = media_mediahaven_variable_get('url');
+	$variables['video_width'] = 640;
+	$variables['video_height'] = 360;
+	return $variables;
+}
