@@ -26,18 +26,18 @@ Create a new folder "libraries" under "sites/all/" and upload the upload package
 Mediahaven Configuration Settings
 ---------------------
 <h3>MediaHaven API</h3>
-*MediaHaven login:* The login to be used by the module to communicate with MediaHaven.
-*MediaHaven password:* The password to be used by the module to communicate with MediaHaven.
-*MediaHaven url:* The MediaHaven url.
+*MediaHaven login:* The login to be used by the module to communicate with MediaHaven.  
+*MediaHaven password:* The password to be used by the module to communicate with MediaHaven.   
+*MediaHaven url:* The MediaHaven url.   
 	
 <h3>MediaHaven Upload settings</h3>
-*Ingestspace id:* The MediaHaven ingestspace that will be used to upload files to.
-*Auto publish:* When enabled files will be automatically published after processing. If disabled a user will have to manually publish them using the mediahaven media management software.
-*Department id:* The default department where uploaded files will belong to. This will be used when autopublishing is enabled.
+*Ingestspace id:* The MediaHaven ingestspace that will be used to upload files to.  
+*Auto publish:* When enabled files will be automatically published after processing. If disabled a user will have to manually publish them using the mediahaven media management software.  
+*Department id:* The default department where uploaded files will belong to. This will be used when autopublishing is enabled.  
 
 <h3>MediaHaven Thumbnail settings</h3>
-*Thumbnail width:* Width of the thumbnails (in pixels), standard is 150px
-*Thumbnail height:* Height of the thumbnails (in pixels), standard is 150px
+*Thumbnail width:* Width of the thumbnails (in pixels), standard is 150px  
+*Thumbnail height:* Height of the thumbnails (in pixels), standard is 150px  
 
 These settings require a Mediahaven account, for more information please visit [www.zeticon.com](http://www.zeticon.com)
 
