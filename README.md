@@ -7,12 +7,12 @@ For more information please visit [www.zeticon.com](http://www.zeticon.com) or c
 Required Modules
 ---------------------
 Upload the following required modules into the folder "sites/all/modules", some modules require additional modules to operate!
-*   Media
-*   File_entity
-*   Views
-*   Ctools
-*   Styles
-*   Plupload
+*   [Media 2.x] (https://drupal.org/project/media)
+*   [File_entity](https://drupal.org/project/file_entity)
+*   [Views](https://drupal.org/project/views)
+*   [Ctools](https://drupal.org/project/ctools)
+*   [Styles](https://drupal.org/project/styles)
+*   [Plupload])https://drupal.org/project/plupload)
 	
 Go to the "Modules" panel in your admin view and enable the listed modules.
 
