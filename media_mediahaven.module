@@ -278,7 +278,7 @@ function media_mediahaven_form($form, &$form_state) {
 	array(
 		'#type' => 'textfield',
 		'#title' => t('Rights owner'),
-		'#default_value' => media_mediahaven_variable_get('rights_owner',MEDIA_MEDIAHAVEN_RIGHTS_OWNER),
+		'#default_value' => media_mediahaven_variable_get('rights_owner'),
 		'#size' => 50,
 		'#description' => t('The rights owner for media uploaded to Mediahaven.'),
 		'#required' => TRUE,
@@ -287,7 +287,7 @@ function media_mediahaven_form($form, &$form_state) {
 	array(
 		'#type' => 'textfield',
 		'#title' => t('Rights'),
-		'#default_value' => media_mediahaven_variable_get('rights',MEDIA_MEDIAHAVEN_RIGHTS),
+		'#default_value' => media_mediahaven_variable_get('rights'),
 		'#size' => 50,
 		'#description' => t('The rights for using and ditributing the uploaded media.'),
 		'#required' => TRUE,
@@ -296,7 +296,7 @@ function media_mediahaven_form($form, &$form_state) {
 	array(
 		'#type' => 'textfield',
 		'#title' => t('Copyright Notice'),
-		'#default_value' => media_mediahaven_variable_get('copyright',MEDIA_MEDIAHAVEN_COPYRIGHT_NOTICE),
+		'#default_value' => media_mediahaven_variable_get('copyright'),
 		'#size' => 50,
 		'#description' => t('Copyright notice for media uploaded to Mediahaven.'),
 		'#required' => TRUE,
@@ -314,7 +314,7 @@ function media_mediahaven_form($form, &$form_state) {
 	array(
 		'#type' => 'textfield',
 		'#title' => t('Thumb_width'),
-		'#default_value' => media_mediahaven_variable_get('thumb_width',150),
+		'#default_value' => media_mediahaven_variable_get('thumb_width'),
 		'#size' => 5,
 		'#description' => t('Width of the thumbnails (in px)'),
 		'#required' => TRUE,
@@ -323,7 +323,7 @@ function media_mediahaven_form($form, &$form_state) {
 	array(
 		'#type' => 'textfield',
 		'#title' => t('Thumb_height'),
-		'#default_value' => media_mediahaven_variable_get('thumb_height',150),
+		'#default_value' => media_mediahaven_variable_get('thumb_height'),
 		'#size' => 5,
 		'#description' => t('Height of the thumbnails (in px)'),
 		'#required' => TRUE,
@@ -397,7 +397,7 @@ function media_mediahaven_media_browser_plugin_info() {
       'title' => t('MediaHaven'),
       'class' => 'MediaMediaHavenBrowser',
   );
-	
+
   return $info;
 }
 

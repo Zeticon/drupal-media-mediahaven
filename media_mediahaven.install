@@ -9,7 +9,16 @@
  * Implements hook_install().
  */
 function media_mediahaven_install() {
-	return array();
+
+    media_mediahaven_variable_set('thumb_width', 150);
+    media_mediahaven_variable_set('thumb_height', 150);
+    media_mediahaven_variable_set('url', 'https://demo.debeeldbank.be');
+    media_mediahaven_variable_set('login', 'restapi');
+    media_mediahaven_variable_set('password', 'r3st@p1');
+    media_mediahaven_variable_set('rights_owner', 'Zeticon');
+    media_mediahaven_variable_set('rights', 'Full rights on reproduction');
+    media_mediahaven_variable_set('copyright', 'Not for commercial use');
+	return array('#finished' => 1);
 }
 
 /**
