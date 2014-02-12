@@ -46,7 +46,7 @@ function _generate_search($state)
 		'#title' => 'Search',
 		'#default_value' => $search !== null ? $search : ''
 	);
-	
+
 	$data['selected_facets'] = $facets_output;
 
 	$data['facets'] = _generate_facets($facets);
@@ -106,7 +106,7 @@ function _get_search_facets($selected_facets, $search_term)
 	{
 		$full_query .= $selected_facet;
 	}
-	
+
 	if (isset($search_term) && strlen($search_term)>0) {
 		if (strlen($full_query) > 0) {
 			$full_query .= ' ';
@@ -293,7 +293,7 @@ function _generate_result_current($media_item) {
 
 	//return theme('image', $variables);
 	//current_path() . '?uuid=
-	
+
 	return l('<img width="' . $variables['width'] . '" height="' . $variables['height'] . '" src="' . $media_item['previewImagePath'] . '"/><span class="media_object_type_' . $media_item['type'] . '">' . $media_item['type'] . '</span>'
 		, 'admin/content/media/add/media_mediahaven/'
 		, array('attributes' => array('class' => 'anchor-class', 'rel' => $media_item['fragmentId'])
@@ -379,3 +379,195 @@ function _submit_mob(&$form, &$form_state) {
 
 }
 
+/**
+ * Page callback: Current posts settings
+ *
+ * @see current_posts_menu()
+ */
+function media_mediahaven_form($form, &$form_state) {
+  $form['media_mediahaven_settings'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('MediaHaven API'),
+      '#description' => t('You will first need to apply for an API Developer Key'),
+      '#collapsible' => TRUE,
+  );
+
+  $form['media_mediahaven_settings'][media_mediahaven_variable_name('login')] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('MediaHaven login'),
+      '#default_value' => media_mediahaven_variable_get('login'),
+      '#size' => 25,
+      '#description' => t('The login to be used by the module to communicate with MediaHaven.'),
+      '#required' => TRUE,
+  );
+  $form['media_mediahaven_settings'][media_mediahaven_variable_name('password')] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('MediaHaven password'),
+      '#default_value' => media_mediahaven_variable_get('password'),
+      '#size' => 25,
+      '#description' => t('The password to be used by the module to communicate with MediaHaven.'),
+      '#required' => TRUE,
+  );
+
+  $form['media_mediahaven_settings'][media_mediahaven_variable_name('url')] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('MediaHaven url'),
+      '#default_value' => media_mediahaven_variable_get('url'),
+      '#size' => 50,
+      '#description' => t('The MediaHaven url.'),
+      '#required' => TRUE,
+  );
+
+  //second form to store upload settings: departement to be used, auto publish, ...
+  $form['media_mediahaven_upload_settings'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('MediaHaven Upload settings'),
+      '#description' => t('Manage the configuration that will be used when you upload files to MediaHaven'),
+      '#collapsible' => TRUE,
+  );
+
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('ingestspace_id')] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('Ingestspace id'),
+      '#default_value' => media_mediahaven_variable_get('ingestspace_id'),
+      '#size' => 50,
+      '#description' => t('The MediaHaven ingestspace that will be used to upload files to.'),
+      '#required' => TRUE,
+  );
+
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('autopublish')] =
+  array(
+      '#type' => 'checkbox',
+      '#title' => t('Auto publish'),
+      '#default_value' => media_mediahaven_variable_get('autopublish'),
+      '#size' => 50,
+      '#description' => t('When enabled files will be automatically published after processing.
+          If disabled a user will have to manually publish them using the
+          mediahaven media management software'),
+
+  );
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('department_id')] =
+  array(
+      '#type' => 'textfield',
+      '#title' => t('Department id'),
+      '#default_value' => media_mediahaven_variable_get('department_id'),
+      '#size' => 50,
+      '#description' => t('The default department where uploaded files will belong to.
+          This will be used when autopublishing is enabled'),
+      '#required' => TRUE,
+  );
+
+	$form['media_mediahaven_rights_settings'] = array(
+	  '#type' => 'fieldset',
+	  '#title' => t('MediaHaven Rights settings'),
+	  '#description' => t('Manage rights and copyright notice for media from Mediahaven'),
+	  '#collapsible' => TRUE,
+	);
+	$form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights_owner')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Rights owner'),
+		'#default_value' => media_mediahaven_variable_get('rights_owner'),
+		'#size' => 50,
+		'#description' => t('The rights owner for media uploaded to Mediahaven.'),
+		'#required' => TRUE,
+	);
+	$form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Rights'),
+		'#default_value' => media_mediahaven_variable_get('rights'),
+		'#size' => 50,
+		'#description' => t('The rights for using and ditributing the uploaded media.'),
+		'#required' => TRUE,
+	);
+	$form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('copyright')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Copyright Notice'),
+		'#default_value' => media_mediahaven_variable_get('copyright'),
+		'#size' => 50,
+		'#description' => t('Copyright notice for media uploaded to Mediahaven.'),
+		'#required' => TRUE,
+	);
+
+
+	//third form to store the thumbnail settings: dimensions
+	$form['media_mediahaven_thumbnail_settings'] = array(
+	  '#type' => 'fieldset',
+	  '#title' => t('MediaHaven Thumbnail settings'),
+	  '#description' => t('Manage the configuration that will to dispaly the MediaHaven thumbnails'),
+	  '#collapsible' => TRUE,
+	);
+	$form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_width')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Thumb_width'),
+		'#default_value' => media_mediahaven_variable_get('thumb_width'),
+		'#size' => 5,
+		'#description' => t('Width of the thumbnails (in px)'),
+		'#required' => TRUE,
+	);
+	$form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_height')] =
+	array(
+		'#type' => 'textfield',
+		'#title' => t('Thumb_height'),
+		'#default_value' => media_mediahaven_variable_get('thumb_height'),
+		'#size' => 5,
+		'#description' => t('Height of the thumbnails (in px)'),
+		'#required' => TRUE,
+	);
+
+  return system_settings_form($form);
+}
+
+
+/**
+ * Implements validation from the Form API.
+ *
+ * @param $form
+ *   A structured array containing the elements and properties of the form.
+ * @param $form_state
+ *   An array that stores information about the form's current state
+ *   during processing.
+ */
+function media_mediahaven_form_validate($form, &$form_state){
+
+	//if($form_state['input']['media_mediahaven__ingestspace_id'])
+	$form_state['values']['media_mediahaven__ingestspace_id'] = trim($form_state['values']['media_mediahaven__ingestspace_id']);
+	if($form_state['values']['media_mediahaven__ingestspace_id'])
+	{
+		if(!validate_uuid($form_state['values']['media_mediahaven__ingestspace_id']))
+		{
+			form_set_error('media_mediahaven__ingestspace_id', t('Ingestspace id is not a valid uuid.'));
+		}
+	}
+
+	//if($form_state['input']['media_mediahaven__department_id'])
+	$form_state['values']['media_mediahaven__department_id'] = trim($form_state['values']['media_mediahaven__department_id']);
+	if($form_state['values']['media_mediahaven__department_id'])
+	{
+		if(!validate_uuid($form_state['values']['media_mediahaven__department_id']))
+		{
+			form_set_error('media_mediahaven__department_id', t('Department id is not a valid uuid.'));
+		}
+	}
+}
+
+/**
+ * Validate uuid
+ */
+function validate_uuid($uuid = FALSE)
+{
+	if($uuid === FALSE) return FALSE;
+
+	if (preg_match('/^\{?[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}\}?$/', $uuid)) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
