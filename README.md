@@ -47,7 +47,10 @@ WYSIWYG
 ---------------------
 <h3>ckeditor</h3>
 https://drupal.org/comment/6814058#comment-6814058
-Media Browser
+
+###Media Browser
+
+To enable MediaHaven file selection form within the media browser: go to "configuration/media browser settings" and check MediaHaven.
 
 ---------------------
 
