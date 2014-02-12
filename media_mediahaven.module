@@ -397,7 +397,7 @@ function media_mediahaven_media_browser_plugin_info() {
       'title' => t('MediaHaven'),
       'class' => 'MediaMediaHavenBrowser',
   );
-
+	
   return $info;
 }
 

@@ -18,13 +18,6 @@ function media_mediahaven_add($form, &$form_state = array(), $redirect = NULL)
 		return;
 	}
 
-	$files = array();
-	// Add the files to JS so that they are accessible inside the browser
-	drupal_add_js(array('media' => array('files' => $files)), 'setting');
-
-	// Add media browser javascript and CSS.
-	drupal_add_js(drupal_get_path('module', 'media_mediahaven') . '/js/media-mediahaven.browser.js');
-
 	$data['mediahaven_search'] = _generate_search($form_state);
 
 	return array('mediahaven' => $data);
@@ -53,7 +46,7 @@ function _generate_search($state)
 		'#title' => 'Search',
 		'#default_value' => $search !== null ? $search : ''
 	);
-
+	
 	$data['selected_facets'] = $facets_output;
 
 	$data['facets'] = _generate_facets($facets);
@@ -113,7 +106,7 @@ function _get_search_facets($selected_facets, $search_term)
 	{
 		$full_query .= $selected_facet;
 	}
-
+	
 	if (isset($search_term) && strlen($search_term)>0) {
 		if (strlen($full_query) > 0) {
 			$full_query .= ' ';
@@ -142,6 +135,7 @@ function _parse_selected_facets($selected_facets)
 
 	$pattern = '/\+dtag\:\"root>([A-Za-z0-9 ]*)>([A-Za-z0-9 ]*)\"/';
 	preg_match_all($pattern, $selected_facets[0], $matches);
+
 
 	if(!empty($matches))
 	{
@@ -226,6 +220,7 @@ function parse_facet_link($query)
 	{
 		$query = $query . '&search=' . substr(trim($matches[0]),2,-1);
 	}
+
 	return $query;
 }
 
@@ -363,7 +358,6 @@ function _submit_mob(&$form, &$form_state) {
 			$redirect = "media/{$file->fid}/edit";
 		}
 
-
 		// I do not understand the block below
 		field_attach_submit('media', $file, $form, $form_state);
 		// Make a copy of the file object to use as the media object
@@ -382,4 +376,6 @@ function _submit_mob(&$form, &$form_state) {
 	}
 	$form_state['values']['redirect'] = $redirect;
 	$form['#attributes']['target'] = '_parent';
+
 }
+

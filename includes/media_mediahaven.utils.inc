@@ -13,6 +13,7 @@ function media_mediahaven_file_save($media_data) {
   } elseif($media_data['type']=='Video')
   {
     $file->filemime = 'video/mp4';
+
   } else
   {
 	 $file->filemime = file_get_mimetype($media_data['original_filename']);
@@ -25,7 +26,6 @@ function media_mediahaven_file_save($media_data) {
   } else {
 	 $file->filename = $media_data['title'];
   }
-
 
   if ($file === FALSE) {
     drupal_set_message(t('An error occurred and no file was saved.'), 'error');
