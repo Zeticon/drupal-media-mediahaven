@@ -13,7 +13,9 @@ Upload the following required modules into the folder "sites/all/modules", some 
 *   [Ctools](https://drupal.org/project/ctools)
 *   [Styles](https://drupal.org/project/styles)
 *   [Plupload](https://drupal.org/project/plupload)
-	
+
+Upload the mediahaven module to "sites/all/modules" and rename the folder to "media_mediahaven" if necessary or rename the zip file to "media_mediahaven" before uploading.
+
 Go to the "Modules" panel in your admin view and enable the listed modules.
 
 Required Library
