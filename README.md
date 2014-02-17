@@ -54,7 +54,6 @@ https://drupal.org/comment/6814058#comment-6814058
 
 
 To enable MediaHaven file selection form within the media browser
-* download and install the [wysiwyg] (https://drupal.org/project/wysiwyg) module
 * go to "configuration/media browser settings" and check MediaHaven.
 
 ---------------------
