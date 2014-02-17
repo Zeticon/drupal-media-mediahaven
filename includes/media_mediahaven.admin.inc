@@ -537,20 +537,20 @@ function media_mediahaven_form($form, &$form_state) {
  */
 function media_mediahaven_form_validate($form, &$form_state){
 
-	//if($form_state['input']['media_mediahaven__ingestspace_id'])
-	$form_state['values']['media_mediahaven__ingestspace_id'] = trim($form_state['values']['media_mediahaven__ingestspace_id']);
+	//if($form_state['input']['media_mediahaven__ingestspace_id'])	
 	if($form_state['values']['media_mediahaven__ingestspace_id'])
 	{
+		$form_state['values']['media_mediahaven__ingestspace_id'] = trim($form_state['values']['media_mediahaven__ingestspace_id']);
 		if(!validate_uuid($form_state['values']['media_mediahaven__ingestspace_id']))
 		{
 			form_set_error('media_mediahaven__ingestspace_id', t('Ingestspace id is not a valid uuid.'));
 		}
 	}
 
-	//if($form_state['input']['media_mediahaven__department_id'])
-	$form_state['values']['media_mediahaven__department_id'] = trim($form_state['values']['media_mediahaven__department_id']);
+	//if($form_state['input']['media_mediahaven__department_id'])	
 	if($form_state['values']['media_mediahaven__department_id'])
 	{
+		$form_state['values']['media_mediahaven__department_id'] = trim($form_state['values']['media_mediahaven__department_id']);
 		if(!validate_uuid($form_state['values']['media_mediahaven__department_id']))
 		{
 			form_set_error('media_mediahaven__department_id', t('Department id is not a valid uuid.'));
