@@ -45,6 +45,24 @@ These settings require a Mediahaven account, for more information please visit [
 
 ---------------------
 
+Configure a Media File Selector
+---------------------
+Linking media items to a node requires the configuration of a Media Selector Field for mediahaven.
+
+Select "Structure" > "Content Types" from the main menu, followed by the operation "manage fields" for the preferred content type.
+
+Create a new field by entering a field name of your choice (eg 'Mediahaven Image'), select the field type "Multimedia Asset" (preferred) or "File".
+Set the widget to "Media File Selector" and confirm by subsequently clicking the "Save"-button and "Save Field"-button.
+
+To complete the setup configure the following settings: 
+*enable "Mediahaven" in the enabled browser plugins, 
+*enable alle desired file types in Allowed remote media types 
+*select "mediahaven:// (MediaHaven media)" in Allowed URI schemes
+
+When editing a node of the content type, a Media Selector Field should be available.
+
+---------------------
+
 WYSIWYG
 ---------------------
 <h3>ckeditor</h3>
