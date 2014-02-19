@@ -23,7 +23,7 @@ Required Library
 Additionally to the module "plupload", the plupload library is required.
 Download the plupload package from: [www.plupload.com/download](http://www.plupload.com/download/). It is important to note that the current php plupload module does not work with the 2+ version of the library. You will need to download version 1.5.x.
 
-Create a new folder "libraries" under "sites/all/" and upload the upload package to this folder. The folder should be named 'plupload' so you have a folder structure: "sites/all/plupload". 
+Create a new folder "libraries" under "sites/all/" and upload the upload package to this folder. The folder should be named 'plupload' so you have a folder structure: "sites/all/libraries/plupload". 
 
 Mediahaven Configuration Settings
 ---------------------
