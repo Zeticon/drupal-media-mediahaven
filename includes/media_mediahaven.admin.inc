@@ -294,7 +294,7 @@ function _generate_result_current($media_item) {
 	//return theme('image', $variables);
 	//current_path() . '?uuid=
 
-	return l('<img width="' . $variables['width'] . '" height="' . $variables['height'] . '" src="' . $media_item['previewImagePath'] . '"/><span class="media_object_type_' . $media_item['type'] . '">' . $media_item['type'] . '</span>'
+	return l('<img width="' . $variables['width'] . '" height="' . $variables['height'] . '" src="' . $media_item['thumbnailImagePath'] . '"/><span class="media_object_type_' . $media_item['type'] . '">' . $media_item['type'] . '</span>'
 		, 'admin/content/media/add/media_mediahaven/'
 		, array('attributes' => array('class' => 'anchor-class', 'rel' => $media_item['fragmentId'])
 					, 'html' => TRUE
