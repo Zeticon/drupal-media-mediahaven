@@ -43,7 +43,7 @@ function _generate_search($state)
 
 	$data['search'] = array(
 		'#type' => 'textfield',
-		'#title' => 'Search',
+		'#title' => t('Search'),
 		'#default_value' => $search !== null ? $search : ''
 	);
 
@@ -53,9 +53,18 @@ function _generate_search($state)
 
 	$data['button'] = array(
 		'#type' => 'button',
-		'#value' => 'search',
+		'#value' => t('Search'),
 		'#submit' => array('media_mediahaven_add_test')
 	);
+	
+	if(isset($results['totalNrOfResults']))
+	{
+		$data['total_results'] = array(
+			'#type' => 'html_tag',
+			'#tag' => 'h3',
+			'#value' => t('Total Results: ') . $results['totalNrOfResults']
+		);
+	}
 
 	$data['results'] = _generate_results($results);
 
