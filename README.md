@@ -1,7 +1,8 @@
 drupal-media-mediahaven
 ====================
 
-This configuration guide is based on the standard drupal installation, the current version of drupal is 7.25
+This configuration guide is based on the standard drupal installation, the current version of drupal is 7.25. Any issues can be reported to [github] (https://github.com/Zeticon/drupal-media-mediahaven/issues).
+
 For more information please visit [www.zeticon.com](http://www.zeticon.com) or contact us at [info@zeticon.com](mailto:info@zeticon.com)
 
 Install the media_mediahaven module
