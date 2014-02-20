@@ -554,4 +554,19 @@ function media_mediahaven_browser_add_submit($form, &$form_state) {
 
 }
 
+function media_mediahaven_file_presave($file) {
+  if(stristr($file->uri, 'mediahaven://'))
+  {
+	$file->metadata['height']  = media_mediahaven_variable_get('thumb_height');
+	$file->metadata['width']  = media_mediahaven_variable_get('thumb_width');
+
+    if(($file->type)=='image')
+    {
+      $file->filemime = 'image/mediahaven';
+    } elseif(($file->type)=='video')
+    {
+      $file->filemime = 'video/mediahaven';
+    }
+  }  
+}
 
