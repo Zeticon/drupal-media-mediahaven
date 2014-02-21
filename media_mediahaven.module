@@ -366,6 +366,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     '#value' => t('Apply'),
   );
 
+
   // This is our half-assed pager.
   $page = isset($_GET['page-yt']) ? $_GET['page-yt'] : 0;
   if (isset($form_state['input']['search'])) {
@@ -375,8 +376,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   if (!empty($term)) {
     $search = json_decode(get_mediahaven_rest_client()->search($term, $page * 15 + 1, 15), TRUE);
   }
-  $form['media']['#prefix'] = '<div id="container"><div id="scrollbox"><ul id="media-browser-library-list" class="media-list-thumbnails">';
-  $form['media']['#suffix'] = '</ul><div id="status"></div></div></div>';
+
 
 
   $empty = FALSE;
@@ -440,9 +440,9 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     $next = l(t('next'), $dest, array('query' => $query));
   }
 
-  $form['pager']= array(
-    '#markup' => $prev . ' ' . $next,
-  );
+//   $form['pager']= array(
+//     '#markup' => '<br>' . $prev . ' ' . $next,
+//   );
 
   $form['submitted-media'] = array(
     '#type' => 'hidden',
@@ -461,6 +461,13 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     '#type' => 'submit',
     '#value' => t('Submit'),
   );
+
+  $form['media']['#prefix'] =  '<div id="container">';
+  if (isset($search) && $search['totalNrOfResults'] > 0) {
+    $form['media']['#prefix'] .= '<div>'. t('Number of results: '). $search['totalNrOfResults'] .'<span style="float:right">'. $prev . ' ' .$next.'</span></div>';
+  }
+  $form['media']['#prefix'] .= '<div id="scrollbox"><ul id="media-browser-library-list" class="media-list-thumbnails">';
+  $form['media']['#suffix'] = '</ul><div id="status"></div></div></div>';
   return $form;
 }
 
