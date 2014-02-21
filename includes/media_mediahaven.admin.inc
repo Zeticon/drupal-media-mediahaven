@@ -56,7 +56,7 @@ function _generate_search($state)
 		'#value' => t('Search'),
 		'#submit' => array('media_mediahaven_add_test')
 	);
-	
+
 	if(isset($results['totalNrOfResults']))
 	{
 		$data['total_results'] = array(
@@ -445,7 +445,7 @@ function media_mediahaven_form($form, &$form_state) {
       '#default_value' => media_mediahaven_variable_get('ingestspace_id'),
       '#size' => 50,
       '#description' => t('The MediaHaven ingestspace that will be used to upload files to.'),
-      '#required' => TRUE,
+      '#required' => FALSE,
   );
 
   $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('autopublish')] =
@@ -467,7 +467,7 @@ function media_mediahaven_form($form, &$form_state) {
       '#size' => 50,
       '#description' => t('The default department where uploaded files will belong to.
           This will be used when autopublishing is enabled'),
-      '#required' => TRUE,
+      '#required' => FALSE,
   );
 
 	$form['media_mediahaven_rights_settings'] = array(
