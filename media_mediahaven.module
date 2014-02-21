@@ -436,7 +436,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     $prev = l(t('previous'), $dest, array('query' => $query));
   }
   $query['page-yt'] = $page + 1;
-  if (!$empty) {
+  if (!$empty && $search['totalNrOfResults'] > ($page + 1) * 15 ) {
     $next = l(t('next'), $dest, array('query' => $query));
   }
 
@@ -567,6 +567,6 @@ function media_mediahaven_file_presave($file) {
     {
       $file->filemime = 'video/mediahaven';
     }
-  }  
+  }
 }
 
