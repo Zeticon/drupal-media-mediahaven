@@ -78,6 +78,11 @@ https://drupal.org/comment/6814058#comment-6814058
 To enable MediaHaven file selection form within the media browser
 * go to "configuration/media browser settings" and check MediaHaven.
 
+Ajax callbacks in the media overlay cause the active tab to switch tab unexpectedly
+---------------------
+This is a known issue and can be fixed with this patch: https://drupal.org/node/1802026
+
+
 ---------------------
 
 Usage of the module
