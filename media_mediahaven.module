@@ -374,7 +374,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     $page = 0;
   }
   if (!empty($term)) {
-    $search = json_decode(get_mediahaven_rest_client()->search($term, $page * 15 + 1, 15), TRUE);
+    $search = json_decode(get_mediahaven_rest_client()->search($term, $page * 15, 15), TRUE);
   }
 
 
