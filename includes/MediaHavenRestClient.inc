@@ -15,6 +15,7 @@ class MediaHavenRestClient {
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_COOKIEJAR => "/tmp/cookie.txt",
         CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => false,
  	CURLOPT_SSLVERSION => 3
     );
 
