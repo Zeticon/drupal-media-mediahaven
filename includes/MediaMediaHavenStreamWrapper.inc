@@ -27,12 +27,12 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
     $this->base_url =  media_mediahaven_variable_get('url');
 
     //TODO we should make a different url for video
-	if ($parameters = $this->get_parameters()) {
-		return  $this->base_url . '/index.php/embed/image?img=' . $parameters['f'];
-
-    } else {
-		return FALSE;
-	}
+    if ($parameters = $this->get_parameters()) {
+      return  $this->base_url . '/index.php/embed/image?img=' . $parameters['f'];
+    }
+    else {
+      return FALSE;
+    }
   }
 
   static function getMimeType($uri, $mapping = NULL) {
@@ -45,8 +45,8 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
 
   function getOriginalThumbnailPath() {
     $parts = $this->get_parameters();
-	$thumb_width = media_mediahaven_variable_get('thumb_width');
-	$thumb_height = media_mediahaven_variable_get('thumb_height');
+    $thumb_width = media_mediahaven_variable_get('thumb_width');
+    $thumb_height = media_mediahaven_variable_get('thumb_height');
     return media_mediahaven_variable_get('url') . '/index.php/embed/image?img=' . $parts['f'] . '&w=' . $thumb_width . '&h=' . $thumb_height;
   }
 

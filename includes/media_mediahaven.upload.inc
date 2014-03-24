@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ *
+ * functions for uploading media files to mediahaven
+ */
 include_once ('MediaHavenRestClient.inc');
 include_once ('media_mediahaven.admin.inc');
 include_once ('media_mediahaven.utils.inc');
@@ -25,7 +30,8 @@ function media_mediahaven_upload($form, &$form_state = array(), $redirect = NULL
             'chunk_size' => '1mb',
         ),
     );
-  } else {
+  }
+  else {
     $form['upload']['uploaded_file'] = array(
         '#name' => 'uploaded_file',
         '#type' => 'file',
@@ -43,26 +49,26 @@ function media_mediahaven_upload($form, &$form_state = array(), $redirect = NULL
       '#collapsible' => TRUE,
   );
 
-   $form['metadata']['title'] = array(
-        '#name' => 'title',
-        '#type' => 'textfield',
-        '#title' => t('Title of the media object(s)'),
-        '#size' => 22,
-    );
+  $form['metadata']['title'] = array(
+      '#name' => 'title',
+      '#type' => 'textfield',
+      '#title' => t('Title of the media object(s)'),
+      '#size' => 22,
+  );
 
-   $form['metadata']['description'] = array(
-        '#name' => 'description',
-        '#type' => 'textarea',
-        '#title' => t('Description of the media object(s)'),
+  $form['metadata']['description'] = array(
+      '#name' => 'description',
+      '#type' => 'textarea',
+      '#title' => t('Description of the media object(s)'),
 
-       );
-    $form['metadata']['keywords'] = array(
-        '#name' => 'keywords',
-        '#type' => 'textarea',
-        '#title' => t('Keywords'),
-        '#description' => t('Enter multiple keywords separated by a comma (,)'),
+  );
+  $form['metadata']['keywords'] = array(
+      '#name' => 'keywords',
+      '#type' => 'textarea',
+      '#title' => t('Keywords'),
+      '#description' => t('Enter multiple keywords separated by a comma (,)'),
 
-       );
+  );
 
   $form['submit'] = array(
       '#name' => 'upload_button',
@@ -74,7 +80,7 @@ function media_mediahaven_upload($form, &$form_state = array(), $redirect = NULL
 }
 
 function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect = NULL) {
-  foreach($form_state['values']['uploaded_file'] as $uploaded_file) {
+  foreach ($form_state['values']['uploaded_file'] as $uploaded_file) {
     if ($uploaded_file['status'] == 'done') {
       $source = $uploaded_file['tmppath'];
       $destination =  file_directory_temp() . '/' . $uploaded_file['name'];
@@ -85,7 +91,7 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       $destination = file_unmanaged_move($source, $destination);
 
       $metadata = _build_metadata($form_state['values']);
-		
+
       $metadata_file = substr($destination, 0, strrpos($destination, '.')) . '.xml';
       media_mediahaven_generate_metadata($metadata_file, $metadata);
 
@@ -93,19 +99,21 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       $rest_client = get_mediahaven_rest_client();
       $result = $rest_client->upload($destination, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
 
-	//clean up
-	file_unmanaged_delete($destination);
-	file_unmanaged_delete($metadata_file);
+      //clean up
+      file_unmanaged_delete($destination);
+      file_unmanaged_delete($metadata_file);
 
       if (!$result) {
-        drupal_set_message('Processing files failed:'. $rest_client->error, 'error');
-      } else {
-		$result = json_decode($result, TRUE);
-		$result['original_filename'] = $uploaded_file['name'];
+        drupal_set_message(filter_xss('Processing files failed:' . $rest_client->error), 'error');
+      }
+      else {
+        $result = json_decode($result, TRUE);
+        $result['original_filename'] = $uploaded_file['name'];
         //manage file within drupal
         media_mediahaven_file_save($result);
       }
-    } else {
+    }
+    else {
       drupal_set_message(t('No uploaded files were provided'));
     }
   }
@@ -113,8 +121,8 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
 }
 
 function _build_metadata($form_values) {
-    $metadata['title'] = $form_values['title'];
-    $metadata['description'] = $form_values['description'];
-    $metadata['keywords'] = explode(',', $form_values['keywords']);
-    return $metadata;
+  $metadata['title'] = $form_values['title'];
+  $metadata['description'] = $form_values['description'];
+  $metadata['keywords'] = explode(',', $form_values['keywords']);
+  return $metadata;
 }

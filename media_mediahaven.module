@@ -48,23 +48,22 @@ function media_mediahaven_stream_wrappers() {
 }
 
 /**
- * Implements hook_help.
+ * Implements hook_help().
  *
  * Displays help and module information.
  *
- * @param path
+ * @param $path
  *   Which path of the site we're using to display help
- * @param arg
+ * @param $arg
  *   Array that holds the current path as returned from arg() function
  */
 function media_mediahaven_help($path, $arg) {
   switch ($path) {
     case "admin/advanced_help#media_mediahaven":
       return '<p>' . t("Advanced Help: Displays links to nodes created on this date") . '</p>';
-      break;
+
     case "admin/help#media_mediahaven":
       return '<p>' . t("Help: Displays links to nodes created on this date") . '</p>';
-      break;
   }
 }
 
@@ -87,14 +86,14 @@ function media_mediahaven_block_info() {
  * Set beginning and end dates, retrieve posts from database
  * saved in that time period.
  *
- * @return
+ * @return array
  *   A result set of the targeted posts.
  */
-function media_mediahaven_contents($display){   //$display argument is new.
+function media_mediahaven_contents($display) {   //$display argument is new.
   //Get today's date.
   $today = getdate();
   //Calculate midnight a week ago.
-  $start_time = mktime(0, 0, 0,$today['mon'],($today['mday'] - 7), $today['year']);
+  $start_time = mktime(0, 0, 0, $today['mon'], ($today['mday'] - 7), $today['year']);
   //Get all posts from one week ago to the present.
   $end_time = time();
   $max_num = variable_get('media_mediahaven_max', 3);
@@ -105,7 +104,7 @@ function media_mediahaven_contents($display){   //$display argument is new.
   ->condition('created', array($start_time, $end_time), 'BETWEEN')
   ->orderBy('created', 'DESC'); //Most recent first. Query paused here.
 
-  if ($display == 'block'){
+  if ($display == 'block') {
     $query->range(0, $max_num);
   }
   //If called by page, query proceeds directly to execute().
@@ -135,7 +134,8 @@ function media_mediahaven_block_view($delta = '') {
         // No content in the last week.
         if (empty($items)) {
           $block['content'] = t('No posts available.');
-        } else {
+        }
+        else {
           // Pass data through theme function.
           $block['content'] = theme('item_list', array(
               'items' => $items));
@@ -153,7 +153,7 @@ function media_mediahaven_menu() {
       'page callback' => 'drupal_get_form',
       'page arguments' => array('media_mediahaven_form'),
       'access arguments' => array('access administration pages'),
-       'file' => 'includes/media_mediahaven.admin.inc',
+      'file' => 'includes/media_mediahaven.admin.inc',
       'type' => MENU_NORMAL_ITEM,
   );
   $items['media_mediahaven'] = array(
@@ -186,9 +186,6 @@ function media_mediahaven_menu() {
 
   return $items;
 }
-
-
-
 
 /**
  * Implements hook_permission().
@@ -234,7 +231,8 @@ function _media_mediahaven_page() {
         '#markup' => t('No posts available.'),
     );
     return $page_array;
-  } else {
+  }
+  else {
     $page_array['media_mediahaven_arguments'] = array(
         '#title' => t('All posts from the last week'),
         '#items' => $items,
@@ -252,17 +250,17 @@ function _media_mediahaven_page() {
  * checkboxes and table with thumbnails.
  */
 function media_mediahaven_form_file_entity_edit_alter(&$form, $form_state) {
-	/*$file = $form['preview']['#file'];
-	if(strstr($file->uri, 'mediahaven://'))
-	{
-		$preview = media_mediahaven_get_thumbnail_preview($file, TRUE);
-		$form['preview'] = $preview;
-	}*/
-	return;
+  /*$file = $form['preview']['#file'];
+   if(strstr($file->uri, 'mediahaven://'))
+   {
+  $preview = media_mediahaven_get_thumbnail_preview($file, TRUE);
+  $form['preview'] = $preview;
+  }*/
+  return;
 }
 
 function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state) {
-	if (!empty($form_state['values']['operation'])) {
+  if (!empty($form_state['values']['operation'])) {
     // The form is being rebuilt because an operation requiring confirmation
     // We don't want to be messing with it in this case.
     return;
@@ -272,36 +270,36 @@ function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state)
 
   if (arg(3) == 'thumbnails') {
 
-	if (empty($form['admin']['files'])) {
+    if (empty($form['admin']['files'])) {
       // Display empty text if there are no files.
       $form['admin']['files'] = array(
-        '#markup' => '<p>' . $form['files']['#empty'] . '</p>',
+          '#markup' => '<p>' . $form['files']['#empty'] . '</p>',
       );
-    } else {
-		$files = file_load_multiple(array_keys($form['admin']['files']));
+    }
+    else {
+      $files = file_load_multiple(array_keys($form['admin']['files']));
 
-		$form['admin']['files'] = array(
-			'#tree' => TRUE,
-			'#prefix' => '<div class="media-display-thumbnails media-clear clearfix"><ul id="media-browser-library-list" class="media-list-thumbnails">',
-			'#suffix' => '</ul></div>',
-		);
+      $form['admin']['files'] = array(
+          '#tree' => TRUE,
+          '#prefix' => '<div class="media-display-thumbnails media-clear clearfix"><ul id="media-browser-library-list" class="media-list-thumbnails">',
+          '#suffix' => '</ul></div>',
+      );
 
-		foreach ($files as $file) {
-			if(strstr($file->uri, 'mediahaven://'))
-			{
-				$preview = media_mediahaven_get_thumbnail_preview($file, TRUE);
-			} else {
-				$preview = media_get_thumbnail_preview($file, TRUE);
-			}
-			$form['admin']['files'][$file->fid] = array(
-				  '#type' => 'checkbox',
-				  '#title' => '',
-				  '#prefix' => '<li>' . drupal_render($preview),
-				  '#suffix' => '</li>',
-				);
-		}
-
-	}
+      foreach ($files as $file) {
+        if (strstr($file->uri, 'mediahaven://')) {
+          $preview = media_mediahaven_get_thumbnail_preview($file, TRUE);
+        }
+        else {
+          $preview = media_get_thumbnail_preview($file, TRUE);
+        }
+        $form['admin']['files'][$file->fid] = array(
+            '#type' => 'checkbox',
+            '#title' => '',
+            '#prefix' => '<li>' . drupal_render($preview),
+            '#suffix' => '</li>',
+        );
+      }
+    }
   }
 }
 
@@ -313,12 +311,12 @@ function media_mediahaven_get_thumbnail_preview($file, $link = NULL) {
   // @todo should CSS be attached to the form element here?
   // $element['#attached']['css'][] = drupal_get_path('module', 'media') . '/css/media.css';
 
-	$preview = file_view_file($file, 'preview');
-	$preview['#show_names'] = TRUE;
-	$preview['#add_link'] = $link;
-	$preview['#theme_wrappers'][] = 'media_mediahaven_thumbnail';
+  $preview = file_view_file($file, 'preview');
+  $preview['#show_names'] = TRUE;
+  $preview['#add_link'] = $link;
+  $preview['#theme_wrappers'][] = 'media_mediahaven_thumbnail';
 
-	return $preview;
+  return $preview;
 }
 
 /**
@@ -326,23 +324,23 @@ function media_mediahaven_get_thumbnail_preview($file, $link = NULL) {
  */
 function media_mediahaven_theme($existing, $type, $theme, $path) {
   return array(
-   // The default media file list form element.
-    'media_file_list' => array(
-      'variables' => array('element' => NULL),
-    ),
+      // The default media file list form element.
+      'media_file_list' => array(
+          'variables' => array('element' => NULL),
+      ),
 
-    // A preview of the uploaded file.
-    'media_mediahaven_thumbnail' => array(
-      'render element' => 'element',
-      'file' => 'includes/media_mediahaven.theme.inc',
-    ),
+      // A preview of the uploaded file.
+      'media_mediahaven_thumbnail' => array(
+          'render element' => 'element',
+          'file' => 'includes/media_mediahaven.theme.inc',
+      ),
 
-	'media_mediahaven_video' => array(
-      'variables' => array('uri' => NULL, 'options' => array()),
-      'file' => 'media_mediahaven.theme.inc',
-      'path' => $path . '/includes',
-      'template' => 'media-mediahaven-video',
-    ),
+      'media_mediahaven_video' => array(
+          'variables' => array('uri' => NULL, 'options' => array()),
+          'file' => 'media_mediahaven.theme.inc',
+          'path' => $path . '/includes',
+          'template' => 'media-mediahaven-video',
+      ),
   );
 }
 
@@ -356,16 +354,15 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   $term = isset($form_state['input']['search']) ? $form_state['input']['search'] : (isset($_GET['search']) ? $_GET['search'] : '');
 
   $form['search'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Search'),
-    '#description' => t('Input a phrase or tags to search.'),
-    '#default_value' => $term,
+      '#type' => 'textfield',
+      '#title' => t('Search'),
+      '#description' => t('Input a phrase or tags to search.'),
+      '#default_value' => $term,
   );
   $form['apply'] = array(
-    '#type' => 'button',
-    '#value' => t('Apply'),
+      '#type' => 'button',
+      '#value' => t('Apply'),
   );
-
 
   // This is our half-assed pager.
   $page = isset($_GET['page-yt']) ? $_GET['page-yt'] : 0;
@@ -376,8 +373,6 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   if (!empty($term)) {
     $search = json_decode(get_mediahaven_rest_client()->search($term, $page * 15, 15), TRUE);
   }
-
-
 
   $empty = FALSE;
   $files = array();
@@ -398,16 +393,16 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
       media_browser_build_media_item($file);
 
       $file->preview = l($file->preview, 'media/browser', array(
-        'html' => TRUE,
-        'attributes' => array(
-          'data-uri' => $uri,
-        ),
-        'query' => array('render' => 'media-popup', 'uri' => $uri),
+          'html' => TRUE,
+          'attributes' => array(
+              'data-uri' => $uri,
+          ),
+          'query' => array('render' => 'media-popup', 'uri' => $uri),
       ));
       $form['media'][$uri] = array(
-        '#markup' => $file->preview,
-        '#prefix' => '<li>',
-        '#suffix' => '</li>',
+          '#markup' => $file->preview,
+          '#prefix' => '<li>',
+          '#suffix' => '</li>',
       );
       $files[$uri] = $file;
     }
@@ -419,7 +414,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
 
   if ($empty) {
     $form['empty'] = array(
-      '#markup' => '<div class="empty-message">' . t('No media match your search criteria. Please try again.') . '</div>',
+        '#markup' => '<div class="empty-message">' . t('No media match your search criteria. Please try again.') . '</div>',
     );
   }
 
@@ -440,13 +435,13 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     $next = l(t('next'), $dest, array('query' => $query));
   }
 
-//   $form['pager']= array(
-//     '#markup' => '<br>' . $prev . ' ' . $next,
-//   );
+  //   $form['pager']= array(
+  //     '#markup' => '<br>' . $prev . ' ' . $next,
+  //   );
 
   $form['submitted-media'] = array(
-    '#type' => 'hidden',
-    '#default_value' => FALSE,
+      '#type' => 'hidden',
+      '#default_value' => FALSE,
   );
 
   // Add the files to JS so that they are accessible inside the browser
@@ -458,76 +453,17 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
 
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Submit'),
+      '#type' => 'submit',
+      '#value' => t('Submit'),
   );
 
   $form['media']['#prefix'] =  '<div id="container">';
   if (isset($search) && $search['totalNrOfResults'] > 0) {
-    $form['media']['#prefix'] .= '<div>'. t('Number of results: '). $search['totalNrOfResults'] .'<span style="float:right">'. $prev . ' ' .$next.'</span></div>';
+    $form['media']['#prefix'] .= '<div>' . t('Number of results:') . ' ' . $search['totalNrOfResults'] . '<span style="float:right">' . $prev . ' ' . $next . '</span></div>';
   }
   $form['media']['#prefix'] .= '<div id="scrollbox"><ul id="media-browser-library-list" class="media-list-thumbnails">';
   $form['media']['#suffix'] = '</ul><div id="status"></div></div></div>';
   return $form;
-}
-
-
-/**
- * Allow stream wrappers to have their chance at validation.
- *
- * Any module that implements hook_media_parse will have an
- * opportunity to validate this.
- *
- * @see media_parse_to_uri()
- */
-function media_mediahaven_browser_add_validate($form, &$form_state) {
-//   return;
-//   if ($form_state['values']['op'] == t('Apply')) {
-//     return;
-//   }
-//   $uri = $form_state['values']['submitted-video'];
-//   try {
-//     $file = file_uri_to_object($uri, TRUE);
-//   }
-//   catch (Exception $e) {
-//     form_set_error('url', $e->getMessage());
-//     return;
-//   }
-
-//   if (!$file->uri) {
-//     form_set_error('url', t('Please select a video.'));
-//     return;
-//   }
-
-//   $validators = $form['#validators'];
-//   if ($validators) {
-//     // Check for errors. @see media_add_upload_validate calls file_save_upload().
-//     // this code is ripped from file_save_upload because we just want the validation part.
-//     // Call the validation functions specified by this function's caller.
-//     $errors = file_validate($file, $validators);
-
-//     if (!empty($errors)) {
-//       $message = t('%uri could not be added.', array('%uri' => $uri));
-//       if (count($errors) > 1) {
-//         $message .= theme('item_list', array('items' => $errors));
-//       }
-//       else {
-//         $message .= ' ' . array_pop($errors);
-//       }
-//       form_set_error('url', $message);
-//       return FALSE;
-//     }
-//   }
-  // @TODO: Validate that if we have no $uri that this is a valid file to
-  // save. For instance, we may only be interested in images, and it would
-  // be helpful to let the user know they passed the HTML page containing
-  // the image accidentally. That would also save us from saving the file
-  // in the submit step.
-
-  // This is kinda a hack of the same.
-
-  // This should use the file_validate routines that the upload form users.
-  // We need to fix the media_parse_to_file routine to allow for a validation.
 }
 
 /**
@@ -540,10 +476,10 @@ function media_mediahaven_browser_add_submit($form, &$form_state) {
     $file = file_uri_to_object($uri, TRUE);
 
     if (!$file->fid) {
-     $fragment_id = media_mediahaven_uri_parse_fragmentid($uri);
-     $media_data = get_mediahaven_rest_client()->getMediaObject($fragment_id);
-     $file = media_mediahaven_mediadata_to_file(json_decode($media_data, TRUE));
-     file_save($file);
+      $fragment_id = media_mediahaven_uri_parse_fragmentid($uri);
+      $media_data = get_mediahaven_rest_client()->getMediaObject($fragment_id);
+      $file = media_mediahaven_mediadata_to_file(json_decode($media_data, TRUE));
+      file_save($file);
     }
   }
   catch (Exception $e) {
@@ -558,20 +494,17 @@ function media_mediahaven_browser_add_submit($form, &$form_state) {
   else {
     $form_state['file'] = $file;
   }
-
 }
 
 function media_mediahaven_file_presave($file) {
-  if(stristr($file->uri, 'mediahaven://'))
-  {
-	$file->metadata['height']  = media_mediahaven_variable_get('thumb_height');
-	$file->metadata['width']  = media_mediahaven_variable_get('thumb_width');
+  if (stristr($file->uri, 'mediahaven://')) {
+    $file->metadata['height']  = media_mediahaven_variable_get('thumb_height');
+    $file->metadata['width']  = media_mediahaven_variable_get('thumb_width');
 
-    if(($file->type)=='image')
-    {
+    if (($file->type)=='image') {
       $file->filemime = 'image/mediahaven';
-    } elseif(($file->type)=='video')
-    {
+    }
+    elseif (($file->type)=='video') {
       $file->filemime = 'video/mediahaven';
     }
   }

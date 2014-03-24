@@ -27,30 +27,31 @@ function theme_my_custom_html($variables) {
 }
 
 function theme_media_mediahaven_thumbnail($variables) {
-	$label = '';
-	$element = $variables['element'];
-	
- // Wrappers to go around the thumbnail.
+  $label = '';
+  $element = $variables['element'];
+
+  // Wrappers to go around the thumbnail.
   $attributes = array(
-    'title' => $element['#file']->filename,
-    'class' => 'media-item',
-    'data-fid' => $element['#file']->fid,
+      'title' => $element['#file']->filename,
+      'class' => 'media-item',
+      'data-fid' => $element['#file']->fid,
   );
   $prefix = '<div ' . drupal_attributes($attributes) . '><div class="media-thumbnail">';
   $suffix = '</div></div>';
 
-	$thumb_width = media_mediahaven_variable_get('thumb_width');
-	$thumb_height = media_mediahaven_variable_get('thumb_height');
-	
+  $thumb_width = media_mediahaven_variable_get('thumb_width');
+  $thumb_height = media_mediahaven_variable_get('thumb_height');
+
   // Arguments for the thumbnail link.
-   $thumb = '<img src="' . str_replace('mediahaven://f/',media_mediahaven_variable_get('url') . '/index.php/embed/image?img=',$element['#file']->uri) . '&w=100&h=100">';
+  $thumb = '<img src="' . str_replace('mediahaven://f/', media_mediahaven_variable_get('url') . '/index.php/embed/image?img=',
+      $element['#file']->uri) . '&w=100&h=100">';
   //$thumb = $element['#children'];
 
   $target = 'file/' . $element['#file']->fid . '/edit';
   $options = array(
-    'query' => drupal_get_destination(),
-    'html' => TRUE,
-    'attributes' => array('title' => t('Click to edit details')),
+      'query' => drupal_get_destination(),
+      'html' => TRUE,
+      'attributes' => array('title' => t('Click to edit details')),
   );
 
   // Element should be a field renderable array. This should be improved.
@@ -73,11 +74,11 @@ function theme_media_mediahaven_thumbnail($variables) {
  * Preprocess function for theme('media_mediahaven_video').
  */
 function media_mediahaven_preprocess_media_mediahaven_video(&$variables) {
-	$umid = substr(strrchr($variables['uri'], "/"), 1);
-	$variables['umid'] = $umid;
+  $umid = substr(strrchr($variables['uri'], "/"), 1);
+  $variables['umid'] = $umid;
 
-	$variables['mediahaven_url'] = media_mediahaven_variable_get('url');
-	$variables['video_width'] = 640;
-	$variables['video_height'] = 360;
-	return $variables;
+  $variables['mediahaven_url'] = media_mediahaven_variable_get('url');
+  $variables['video_width'] = 640;
+  $variables['video_height'] = 360;
+  return $variables;
 }

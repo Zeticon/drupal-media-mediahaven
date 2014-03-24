@@ -1,36 +1,41 @@
 <?php
+/**
+ * @file
+ *
+ * utility functions for the media_mediahaven module
+ */
 /*
  * Save a mediahaven media file into drupal
 */
 function media_mediahaven_file_save($media_data) {
 
-  $uri = file_stream_wrapper_uri_normalize("mediahaven://f/".$media_data['fragmentId']);
+  $uri = file_stream_wrapper_uri_normalize("mediahaven://f/" . $media_data['fragmentId']);
   //drupal_set_message('uri to save '.$uri);
   $file = file_uri_to_object($uri, TRUE);
-  if($media_data['type']=='Image')
-  {
+  if ($media_data['type']=='Image') {
     $file->filemime = 'image/jpeg';
-  } elseif($media_data['type']=='Video')
-  {
+  }
+  elseif ($media_data['type']=='Video') {
     $file->filemime = 'video/mp4';
 
-  } else
-  {
-	 $file->filemime = file_get_mimetype($media_data['original_filename']);
+  }
+  else  {
+    $file->filemime = file_get_mimetype($media_data['original_filename']);
   }
 
   $file->filesize = @filesize($uri);
-  if($media_data['title']=='provided title')
-  {
-	 $file->filename = $media_data['original_filename'];
-  } else {
-	 $file->filename = $media_data['title'];
+  if ($media_data['title']=='provided title') {
+    $file->filename = $media_data['original_filename'];
+  }
+  else {
+    $file->filename = $media_data['title'];
   }
 
   if ($file === FALSE) {
     drupal_set_message(t('An error occurred and no file was saved.'), 'error');
     $redirect = "media_mediahaven_add";
-  } elseif (!property_exists($file, 'fid')) {
+  }
+  elseif (!property_exists($file, 'fid')) {
     $file = file_save($file);
     $redirect = "media/{$file->fid}/edit";
 
@@ -45,19 +50,19 @@ function media_mediahaven_file_save($media_data) {
     $file->is_new = TRUE;
     field_attach_insert('media', $file);
     drupal_set_message(t('Successfully added media'));
-  } else {
+  }
+  else {
     // Already exists
     drupal_set_message(t('Already exists'), 'warning');
-    return false;
+    return FALSE;
     //drupal_goto("media/{$file->fid}/edit");
   }
   return $file;
-
 }
 
 function media_mediahaven_generate_metadata($metadata_file, $metadata) {
 
-  $xml = simplexml_load_file(dirname(__FILE__).'/../assets/metadata.template.xml');
+  $xml = simplexml_load_file(dirname(__FILE__) . '/../assets/metadata.template.xml');
   $xml->MDProperties[0]->Department = media_mediahaven_variable_get('department_id');
 
   global $user;
@@ -65,21 +70,18 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
   if (!empty($user->mail)) {
     $application_user = $user->mail;
   }
-	$xml->MDProperties[0]->applicatie_gebruiker = $application_user;
-	$xml->MDProperties[0]->rights_owner = media_mediahaven_variable_get('rights_owner');
-	$xml->MDProperties[0]->rights = media_mediahaven_variable_get('rights');
-	$xml->MDProperties[0]->copyright_notice = media_mediahaven_variable_get('copyright');
+  $xml->MDProperties[0]->applicatie_gebruiker = $application_user;
+  $xml->MDProperties[0]->rights_owner = media_mediahaven_variable_get('rights_owner');
+  $xml->MDProperties[0]->rights = media_mediahaven_variable_get('rights');
+  $xml->MDProperties[0]->copyright_notice = media_mediahaven_variable_get('copyright');
 
-
-  if(!empty($metadata['title'])) {
+  if (!empty($metadata['title'])) {
     $xml->title = $metadata['title'];
   }
 
-  if(!empty($metadata['description'])) {
+  if (!empty($metadata['description'])) {
     $xml->description = $metadata['description'];
   }
-
-
 
   if (!empty($metadata['keywords'])) {
     foreach ($metadata['keywords'] as $keyword) {
@@ -99,39 +101,39 @@ function get_mediahaven_rest_client() {
 }
 
 function media_mediahaven_mediadata_to_file($media_data) {
-	// Check database for this uri
-	$fragment_id = $media_data['fragmentId'];
-	$uri = file_stream_wrapper_uri_normalize("mediahaven://f/$fragment_id");
-	$file = file_uri_to_object($uri, TRUE);
+  // Check database for this uri
+  $fragment_id = $media_data['fragmentId'];
+  $uri = file_stream_wrapper_uri_normalize("mediahaven://f/$fragment_id");
+  $file = file_uri_to_object($uri, TRUE);
 
-	if($media_data['type']=='Image')
-	{
-		$file->filemime = 'image/mediahaven';
-		$file->type = 'image';
-	} elseif($media_data['type']=='Video')
-	{
-		$file->filemime = 'video/mediahaven';
-		$file->type = 'video';
-	} else {
-	    $file->filemime = 'todo';
-	    $file->type = 'image';
-	}
+  if ($media_data['type']=='Image') {
+    $file->filemime = 'image/mediahaven';
+    $file->type = 'image';
+  }
+  elseif ($media_data['type']=='Video') {
+    $file->filemime = 'video/mediahaven';
+    $file->type = 'video';
+  }
+  else {
+    $file->filemime = 'todo';
+    $file->type = 'image';
+  }
 
-	//$file->filemime = file_get_mimetype($uri);
-	$file->filesize = @filesize($uri);
-	$file->filename = $media_data['title'];
-	return $file;
+  //$file->filemime = file_get_mimetype($uri);
+  $file->filesize = @filesize($uri);
+  $file->filename = $media_data['title'];
+  return $file;
 }
 
-function media_mediahaven_uri_parse_fragmentid($uri){
+function media_mediahaven_uri_parse_fragmentid($uri) {
   $target = file_uri_target($uri);
-     $parts = explode('/', $target);
-     $index = 0;
-     $fragment_id = '';
-     foreach ($parts as $part) {
-       if ($part == 'f') {
-         return $parts[++$index];
-       }
-       $index++;
-     }
+  $parts = explode('/', $target);
+  $index = 0;
+  $fragment_id = '';
+  foreach ($parts as $part) {
+    if ($part == 'f') {
+      return $parts[++$index];
+    }
+    $index++;
+  }
 }
