@@ -197,7 +197,7 @@ function media_mediahaven_generate_facets_link($facets) {
   $facet_links = array();
 
   foreach ($facets as $facet_item) {
-    $facet_links[] = '<a href="' . '?fa[]=' . parse_facet_link($facet_item['query']) . '">'
+    $facet_links[] = '<a href="' . '?fa[]=' . media_mediahaven_parse_facet_link($facet_item['query']) . '">'
         . htmlentities($facet_item['label'])
         . '</a> (' . $facet_item['count'] . ')';
   }
@@ -207,7 +207,7 @@ function media_mediahaven_generate_facets_link($facets) {
   return $facet_links;
 }
 
-function parse_facet_link($query) {
+function media_mediahaven_parse_facet_link($query) {
   $pattern = '/\+\([A-Za-z0-9 ]*\)/';
   preg_match($pattern, $query, $matches);
   $query = urlencode($query);
@@ -530,14 +530,14 @@ function media_mediahaven_form_validate($form, &$form_state) {
 
   if ($form_state['values'][media_mediahaven_variable_name('ingestspace_id')]) {
     $form_state['values'][media_mediahaven_variable_name('ingestspace_id')] = trim($form_state['values'][media_mediahaven_variable_name('ingestspace_id')]);
-    if (!validate_uuid($form_state['values'][media_mediahaven_variable_name('ingestspace_id')])) {
+    if (!media_mediahaven_validate_uuid($form_state['values'][media_mediahaven_variable_name('ingestspace_id')])) {
       form_set_error(media_mediahaven_variable_name('ingestspace_id'), t('Ingestspace id is not a valid uuid.'));
     }
   }
 
   if ($form_state['values'][media_mediahaven_variable_name('department_id')]) {
     $form_state['values'][media_mediahaven_variable_name('department_id')] = trim($form_state['values'][media_mediahaven_variable_name('department_id')]);
-    if (!validate_uuid($form_state['values'][media_mediahaven_variable_name('department_id')])) {
+    if (!media_mediahaven_validate_uuid($form_state['values'][media_mediahaven_variable_name('department_id')])) {
       form_set_error(media_mediahaven_variable_name('department_id'), t('Department id is not a valid uuid.'));
     }
   }
@@ -546,7 +546,7 @@ function media_mediahaven_form_validate($form, &$form_state) {
 /**
  * Validate uuid
  */
-function validate_uuid($uuid = FALSE) {
+function media_mediahaven_validate_uuid($uuid = FALSE) {
   if ($uuid === FALSE) return FALSE;
 
   if (preg_match('/^\{?[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}\}?$/', $uuid)) {
