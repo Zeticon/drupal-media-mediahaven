@@ -94,7 +94,7 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
   $xml->asXML($metadata_file);
 }
 
-function get_mediahaven_rest_client() {
+function media_mediahaven_rest_client() {
   return new MediaHavenRestClient(media_mediahaven_variable_get('url') . MEDIA_MEDIAHAVEN_RESTPOINT,
       media_mediahaven_variable_get('login'),
       media_mediahaven_variable_get('password'));
