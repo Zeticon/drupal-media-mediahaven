@@ -243,7 +243,7 @@ function _get_search_results($search, $selected_facets) {
     $arr_json = json_decode($result, TRUE);
   }
   else {
-    drupal_set_message(t('Could not retrieve search results:') . $filter_xss($rest_client->error), 'error');
+    drupal_set_message(t('Could not retrieve search results:') . filter_xss($rest_client->error), 'error');
   }
 
   return $arr_json;
