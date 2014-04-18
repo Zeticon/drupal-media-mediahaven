@@ -13,34 +13,34 @@ include_once ('media_mediahaven.variables.inc');
 function media_mediahaven_add($form, &$form_state = array(), $redirect = NULL) {
   module_load_include('inc', 'media', 'includes/media.browser');
 
-  $uuid = _get_parameter($_GET, 'uuid');
+  $uuid = media_mediahaven_parameter($_GET, 'uuid');
 
   if ($uuid !== NULL) {
-    _submit_mob($form, $form_state);
+    media_mediahaven_submit_mob($form, $form_state);
     return;
   }
 
-  $data['mediahaven_search'] = _generate_search($form_state);
+  $data['mediahaven_search'] = media_mediahaven_generate_search($form_state);
 
   return array('mediahaven' => $data);
 }
 
-function _generate_search($state) {
+function media_mediahaven_generate_search($state) {
   $data = array(
       '#type' => 'fieldset',
       #'#title' => t('Search in Mediahaven'),
   );
 
   // used search string
-  $search = _get_search_string($state);
+  $search = media_mediahaven_search_string($state);
   // selected facets
-  $selected_facets = _get_selected_facets($state);
-  $facets_output = _parse_selected_facets($selected_facets);
+  $selected_facets = media_mediahaven_selected_facets($state);
+  $facets_output = media_mediahaven_parse_selected_facets($selected_facets);
 
-  $facets = _get_search_facets($selected_facets, $search);
+  $facets = media_mediahaven_search_facets($selected_facets, $search);
 
   // search results
-  $results = _get_search_results($search, $selected_facets);
+  $results = media_mediahaven_search_results($search, $selected_facets);
 
   $data['search'] = array(
       '#type' => 'textfield',
@@ -50,7 +50,7 @@ function _generate_search($state) {
 
   $data['selected_facets'] = $facets_output;
 
-  $data['facets'] = _generate_facets($facets);
+  $data['facets'] = media_mediahaven_generate_facets($facets);
 
   $data['button'] = array(
       '#type' => 'button',
@@ -66,21 +66,21 @@ function _generate_search($state) {
     );
   }
 
-  $data['results'] = _generate_results($results);
+  $data['results'] = media_mediahaven_generate_results($results);
 
-  $data['pager'] = _generate_pager($results['totalNrOfResults'], 0, array('search' => $search));
+  $data['pager'] = media_mediahaven_generate_pager($results['totalNrOfResults'], 0, array('search' => $search));
 
   return $data;
 }
 
-function _get_parameter($container, $key, $default = NULL) {
+function media_mediahaven_parameter($container, $key, $default = NULL) {
   if (isset($container[$key])) {
     return $container[$key];
   }
   return $default;
 }
 
-function _get_search_string($state) {
+function media_mediahaven_search_string($state) {
   $search = NULL;
 
   if (isset($state['values']['search'])) {
@@ -94,7 +94,7 @@ function _get_search_string($state) {
   return $search;
 }
 
-function _get_selected_facets($state) {
+function media_mediahaven_selected_facets($state) {
   $selected_facets = array();
   // array('fa' => 'atom', 'fl' => 'label', 'fk' => 'keyword')
 
@@ -107,7 +107,7 @@ function _get_selected_facets($state) {
   return $selected_facets;
 }
 
-function _get_search_facets($selected_facets, $search_term) {
+function media_mediahaven_search_facets($selected_facets, $search_term) {
   $full_query = "";
   foreach ($selected_facets as $selected_facet) {
     $full_query .= $selected_facet;
@@ -134,7 +134,7 @@ function _get_search_facets($selected_facets, $search_term) {
   }
 }
 
-function _parse_selected_facets($selected_facets) {
+function media_mediahaven_parse_selected_facets($selected_facets) {
   if (!$selected_facets) return FALSE;
   if (!$selected_facets[0]) return FALSE;
 
@@ -159,7 +159,7 @@ function _parse_selected_facets($selected_facets) {
   return FALSE;
 }
 
-function _generate_facets($facets) {
+function media_mediahaven_generate_facets($facets) {
   if (empty($facets)) return array();
 
   // name => string (keyword)
@@ -175,7 +175,7 @@ function _generate_facets($facets) {
   );
 
   foreach ($facets as $facet_category) {
-    $children = _generate_facets_link($facet_category['value']);
+    $children = media_mediahaven_generate_facets_link($facet_category['value']);
 
     $facet_category = array('data'  => $facet_category['title'],
         'id'  => $facet_category['name'],
@@ -188,7 +188,7 @@ function _generate_facets($facets) {
   return $facets_list;
 }
 
-function _generate_facets_link($facets) {
+function media_mediahaven_generate_facets_link($facets) {
   $max_facets = 5;
   //	label
   //	atom
@@ -218,7 +218,7 @@ function parse_facet_link($query) {
   return $query;
 }
 
-function _get_search_results($search, $selected_facets) {
+function media_mediahaven_search_results($search, $selected_facets) {
   $start_index = 0;
   $nr_of_results  = 25;
   $query = '';
@@ -249,7 +249,7 @@ function _get_search_results($search, $selected_facets) {
   return $arr_json;
 }
 
-function _generate_results($results) {
+function media_mediahaven_generate_results($results) {
   if (isset($results['totalNrOfResults'])) unset($results['totalNrOfResults']);
   if (isset($results['startIndex'])) unset($results['startIndex']);
   $results = $results['mediaDataList'];
@@ -291,7 +291,7 @@ function _generate_result_current($media_item) {
 
 }
 
-function _generate_pager($num_results, $element = 0, $parameters = array()) {
+function media_mediahaven_generate_pager($num_results, $element = 0, $parameters = array()) {
   //zoekwaard uit link overschrijven met search
   if (isset($_POST['search'])) $_GET['search'] = filter_xss(check_plain($_POST['search']));
 
@@ -302,8 +302,8 @@ function _generate_pager($num_results, $element = 0, $parameters = array()) {
 
 
 // save file
-function _submit_mob(&$form, &$form_state) {
-  $uuid = _get_parameter($_GET, 'uuid');
+function media_mediahaven_submit_mob(&$form, &$form_state) {
+  $uuid = media_mediahaven_parameter($_GET, 'uuid');
 
   $redirect = 'media_mediahaven_add';
 
