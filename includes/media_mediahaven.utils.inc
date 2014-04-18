@@ -94,6 +94,7 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
   $xml->asXML($metadata_file);
 }
 
+
 /**
  * Initialize the MediaHaven REST client.
  */
