@@ -352,7 +352,6 @@ function media_mediahaven_submit_mob(&$form, &$form_state) {
     field_attach_submit('media', $file, $form, $form_state);
     // Make a copy of the file object to use as the media object
     // (file is a field of media and the base table). This is weird.
-    $media = clone($file);
     $file->file = array();
     $file->file[LANGUAGE_NONE] = array();
     $file->file[LANGUAGE_NONE][0] = (array) $file + array('display' => TRUE);

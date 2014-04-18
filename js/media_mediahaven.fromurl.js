@@ -50,7 +50,7 @@
             mediaBrowser.getActivePanel().html('');
             //mediaBrowser.getActivePanel().addClass('throbber');
 
-            // Assumes we have to refresh everytime.
+            // Assumes we have to refresh every time.
             // Remove any existing content
             mediaBrowser.getActivePanel().append('<ul></ul>');
             that.browser = $('ul', mediaBrowser.getActivePanel());

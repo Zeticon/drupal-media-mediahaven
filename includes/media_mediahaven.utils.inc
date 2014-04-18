@@ -33,17 +33,14 @@ function media_mediahaven_file_save($media_data) {
 
   if ($file === FALSE) {
     drupal_set_message(t('An error occurred and no file was saved.'), 'error');
-    $redirect = "media_mediahaven_add";
   }
   elseif (!property_exists($file, 'fid')) {
     $file = file_save($file);
-    $redirect = "media/{$file->fid}/edit";
 
     // I do not understand the block below
     //field_attach_submit('media', $file, $form, $form_state);
     // Make a copy of the file object to use as the media object
     // (file is a field of media and the base table). This is weird.
-    $media = clone($file);
     $file->file = array();
     $file->file[LANGUAGE_NONE] = array();
     $file->file[LANGUAGE_NONE][0] = (array) $file + array('display' => TRUE);
@@ -129,7 +126,6 @@ function media_mediahaven_uri_parse_fragmentid($uri) {
   $target = file_uri_target($uri);
   $parts = explode('/', $target);
   $index = 0;
-  $fragment_id = '';
   foreach ($parts as $part) {
     if ($part == 'f') {
       return $parts[++$index];

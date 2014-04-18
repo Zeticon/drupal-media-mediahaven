@@ -1,17 +1,23 @@
 <?php
-/*
+/**
  * @file
  * A Rest Client class for interaction with the MediaHaven REST-API
  */
 class MediaHavenRestClient {
 
-  public $base_rest_url;
-  private $options = array();
-  private $error = '';
+  public $baseRestUrl;
+  protected $options = array();
+  protected $error = '';
   const SUPPORTED_MEDIATYPES_QUERY = '+(MediaObjectType:Video OR MediaObjectType:Image)';
 
-  function __construct($base_rest_url, $login, $password) {
-    $this->base_rest_url = $base_rest_url;
+  /**
+   * constructor
+   * @param unknown $baseRestUrl
+   * @param unknown $login
+   * @param unknown $password
+   */
+  function __construct($baseRestUrl, $login, $password) {
+    $this->baseRestUrl = $baseRestUrl;
     $this->options = array(
         CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
         CURLOPT_USERPWD => $login . ":" . $password,
@@ -24,13 +30,21 @@ class MediaHavenRestClient {
 
   }
 
+  /**
+   *
+   * @param unknown $property
+   */
   public function __get($property) {
     if (property_exists($this, $property)) {
       return $this->$property;
     }
   }
 
-  private function init_curl() {
+  /**
+   *
+   * @return resource
+   */
+  private function initCurl() {
     $curl = curl_init();
     foreach ($this->options as $option => $value) {
       curl_setopt($curl, $option, $value);
@@ -38,8 +52,15 @@ class MediaHavenRestClient {
     return $curl;
   }
 
-  public function search($query, $startIndex, $nrOfResults) {
-    if ($query!='') {
+  /**
+   * Search for a specific term
+   * @param unknown $query
+   * @param unknown $startIndex
+   * @param unknown $nr_of_results
+   * @return Ambigous <boolean, mixed>
+   */
+  public function search($query, $start_index, $nr_of_results) {
+    if ($query != '') {
       $query = '+(' . $query . ') ';
     }
     if (strpos($query, self::SUPPORTED_MEDIATYPES_QUERY) == FALSE) {
@@ -47,37 +68,50 @@ class MediaHavenRestClient {
     }
     $query = urlencode($query);
 
-    $url = $this->base_rest_url . '/media?q=' . $query;
-    //drupal_set_message('----> ' . $url);
-    if (isset($startIndex) && strlen($startIndex) > 0) {
-      $url .= '&startIndex=' . $startIndex;
+    $url = $this->baseRestUrl . '/media?q=' . $query;
+    if (isset($start_index) && strlen($start_index) > 0) {
+      $url .= '&startIndex=' . $start_index;
     }
-    if (isset($nrOfResults) && strlen($nrOfResults)) {
-      $url .= '&nrOfResults=' . $nrOfResults;
+    if (isset($nr_of_results) && strlen($nr_of_results)) {
+      $url .= '&nrOfResults=' . $nr_of_results;
     }
 
     $this->options[CURLOPT_URL] = $url;
-    //drupal_set_message('----> ' . $this->options[CURLOPT_URL]);
     return $this->execute();
   }
 
+  /**
+   * retrieve a mediaobject based on an id
+   * @param unknown $id
+   * @return Ambigous <boolean, mixed>
+   */
   public function getMediaObject($id) {
-    $this->options[CURLOPT_URL] = $this->base_rest_url . '/media/' . $id;
-    //drupal_set_message('----> ' . $this->options[CURLOPT_URL]);
+    $this->options[CURLOPT_URL] = $this->baseRestUrl . '/media/' . $id;
     return $this->execute();
   }
 
+  /**
+   * load the facets with a certain query
+   * @param unknown $query
+   * @return Ambigous <boolean, mixed>
+   */
   public function getFacets($query) {
     if (strpos($query, self::SUPPORTED_MEDIATYPES_QUERY) == FALSE) {
       $query .= self::SUPPORTED_MEDIATYPES_QUERY;
     }
-    $this->options[CURLOPT_URL] = $this->base_rest_url . '/facets?q=' . urlencode($query);
-    //drupal_set_message('----> ' . $this->options[CURLOPT_URL]);
+    $this->options[CURLOPT_URL] = $this->baseRestUrl . '/facets?q=' . urlencode($query);
     return $this->execute();
   }
 
+  /**
+   * upload media file to webservice
+   * @param unknown $media_file
+   * @param unknown $metadata_file
+   * @param unknown $ingestspace_id
+   * @return Ambigous <boolean, mixed>
+   */
   public function upload($media_file, $metadata_file, $ingestspace_id) {
-    if (media_mediahaven_variable_get('autopublish')==1) {
+    if (media_mediahaven_variable_get('autopublish') == 1) {
       $autopublish = 'true';
     }
     else {
@@ -91,17 +125,19 @@ class MediaHavenRestClient {
         'autoPublish' => $autopublish,
     );
 
-    $this->options[CURLOPT_URL] = $this->base_rest_url . '/media';
+    $this->options[CURLOPT_URL] = $this->baseRestUrl . '/media';
     $this->options[CURLOPT_POST] = 1;
     $this->options[CURLOPT_POSTFIELDS] = $upload_settings;
 
-    //drupal_set_message(serialize($this->options[CURLOPT_POSTFIELDS]));
-    //file_unmanaged_copy($metadata_file, $metadata_file .'bck');
     return $this->execute();
   }
 
+  /**
+   *
+   * @return boolean|mixed
+   */
   private function execute() {
-    $curl = $this->init_curl();
+    $curl = $this->initCurl();
     $response = curl_exec($curl);
     $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     $this->error = curl_error($curl);

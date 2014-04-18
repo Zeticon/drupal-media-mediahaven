@@ -90,7 +90,7 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
 
       $destination = file_unmanaged_move($source, $destination);
 
-      $metadata = _build_metadata($form_state['values']);
+      $metadata = media_mediahaven_build_metadata($form_state['values']);
 
       $metadata_file = substr($destination, 0, strrpos($destination, '.')) . '.xml';
       media_mediahaven_generate_metadata($metadata_file, $metadata);
@@ -120,7 +120,7 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
 
 }
 
-function _build_metadata($form_values) {
+function media_mediahaven_build_metadata($form_values) {
   $metadata['title'] = $form_values['title'];
   $metadata['description'] = $form_values['description'];
   $metadata['keywords'] = explode(',', $form_values['keywords']);

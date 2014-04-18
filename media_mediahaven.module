@@ -152,7 +152,7 @@ function media_mediahaven_menu() {
       'description' => 'Configuration for media mediahaven module',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('media_mediahaven_form'),
-      'access arguments' => array('access administration pages'),
+      'access arguments' => array('administer site configuration'),
       'file' => 'includes/media_mediahaven.admin.inc',
       'type' => MENU_NORMAL_ITEM,
   );
@@ -175,7 +175,7 @@ function media_mediahaven_menu() {
       'title' => 'Add media from Mediahaven',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('media_mediahaven_add'),
-      'access arguments' => array('access administration pages'),
+      'access arguments' => array('administer site configuration'),
       'type' => MENU_LOCAL_ACTION,
       'file' => 'includes/media_mediahaven.admin.inc',
       'weight' => -1,
@@ -265,8 +265,6 @@ function media_mediahaven_form_file_entity_admin_file_alter(&$form, $form_state)
     // We don't want to be messing with it in this case.
     return;
   }
-
-  $path = drupal_get_path('module', 'media_mediahaven');
 
   if (arg(3) == 'thumbnails') {
 
