@@ -120,7 +120,7 @@ function _get_search_facets($selected_facets, $search_term) {
     $full_query .= '+(' . $search_term . ')';
   }
 
-  $rest_client = get_mediahaven_rest_client();
+  $rest_client = media_mediahaven_rest_client();
   $result = $rest_client->getFacets($full_query);
 
   $arr_facets_json = json_decode($result, TRUE);
@@ -236,7 +236,7 @@ function _get_search_results($search, $selected_facets) {
     }
   }
 
-  $rest_client = get_mediahaven_rest_client();
+  $rest_client = media_mediahaven_rest_client();
   $result = $rest_client->search($query, $start_index, $nr_of_results);
 
   if ($result) {
@@ -309,7 +309,7 @@ function _submit_mob(&$form, &$form_state) {
 
   // alle info van het mediaobject ophalen
 
-  $rest_client = get_mediahaven_rest_client();
+  $rest_client = media_mediahaven_rest_client();
   $result = $rest_client->getMediaObject($uuid);
 
   if ($result) {

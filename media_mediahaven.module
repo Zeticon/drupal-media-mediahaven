@@ -371,7 +371,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     $page = 0;
   }
   if (!empty($term)) {
-    $search = json_decode(get_mediahaven_rest_client()->search($term, $page * 15, 15), TRUE);
+    $search = json_decode(media_mediahaven_rest_client()->search($term, $page * 15, 15), TRUE);
   }
 
   $empty = FALSE;
@@ -477,7 +477,7 @@ function media_mediahaven_browser_add_submit($form, &$form_state) {
 
     if (!$file->fid) {
       $fragment_id = media_mediahaven_uri_parse_fragmentid($uri);
-      $media_data = get_mediahaven_rest_client()->getMediaObject($fragment_id);
+      $media_data = media_mediahaven_rest_client()->getMediaObject($fragment_id);
       $file = media_mediahaven_mediadata_to_file(json_decode($media_data, TRUE));
       file_save($file);
     }
