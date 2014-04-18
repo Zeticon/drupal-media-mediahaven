@@ -1,8 +1,10 @@
 <?php
+
 /**
  * @file
  * A Rest Client class for interaction with the MediaHaven REST-API
  */
+
 class MediaHavenRestClient {
 
   public $baseRestUrl;
@@ -11,28 +13,23 @@ class MediaHavenRestClient {
   const SUPPORTED_MEDIATYPES_QUERY = '+(MediaObjectType:Video OR MediaObjectType:Image)';
 
   /**
-   * constructor
-   * @param unknown $baseRestUrl
-   * @param unknown $login
-   * @param unknown $password
+   * Constructor.
    */
-  function __construct($baseRestUrl, $login, $password) {
+  public function __construct($baseRestUrl, $login, $password) {
     $this->baseRestUrl = $baseRestUrl;
     $this->options = array(
-        CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-        CURLOPT_USERPWD => $login . ":" . $password,
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_COOKIEJAR => "/tmp/cookie.txt",
-        CURLOPT_SSL_VERIFYPEER => FALSE,
-        CURLOPT_SSL_VERIFYHOST => FALSE,
-        CURLOPT_SSLVERSION => 3
+      CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+      CURLOPT_USERPWD => $login . ":" . $password,
+      CURLOPT_RETURNTRANSFER => 1,
+      CURLOPT_COOKIEJAR => "/tmp/cookie.txt",
+      CURLOPT_SSL_VERIFYPEER => FALSE,
+      CURLOPT_SSL_VERIFYHOST => FALSE,
+      CURLOPT_SSLVERSION => 3,
     );
-
   }
 
   /**
-   *
-   * @param unknown $property
+   * Retrieve property.
    */
   public function __get($property) {
     if (property_exists($this, $property)) {
@@ -41,8 +38,7 @@ class MediaHavenRestClient {
   }
 
   /**
-   *
-   * @return resource
+   * Initialize curl with the provided options.
    */
   private function initCurl() {
     $curl = curl_init();
@@ -53,11 +49,7 @@ class MediaHavenRestClient {
   }
 
   /**
-   * Search for a specific term
-   * @param unknown $query
-   * @param unknown $startIndex
-   * @param unknown $nr_of_results
-   * @return Ambigous <boolean, mixed>
+   * Search for a specific term.
    */
   public function search($query, $start_index, $nr_of_results) {
     if ($query != '') {
@@ -81,9 +73,7 @@ class MediaHavenRestClient {
   }
 
   /**
-   * retrieve a mediaobject based on an id
-   * @param unknown $id
-   * @return Ambigous <boolean, mixed>
+   * Retrieve a mediaobject based on an id.
    */
   public function getMediaObject($id) {
     $this->options[CURLOPT_URL] = $this->baseRestUrl . '/media/' . $id;
@@ -91,9 +81,7 @@ class MediaHavenRestClient {
   }
 
   /**
-   * load the facets with a certain query
-   * @param unknown $query
-   * @return Ambigous <boolean, mixed>
+   * Load the facets with a certain query.
    */
   public function getFacets($query) {
     if (strpos($query, self::SUPPORTED_MEDIATYPES_QUERY) == FALSE) {
@@ -104,11 +92,7 @@ class MediaHavenRestClient {
   }
 
   /**
-   * upload media file to webservice
-   * @param unknown $media_file
-   * @param unknown $metadata_file
-   * @param unknown $ingestspace_id
-   * @return Ambigous <boolean, mixed>
+   * Upload media file to webservice.
    */
   public function upload($media_file, $metadata_file, $ingestspace_id) {
     if (media_mediahaven_variable_get('autopublish') == 1) {
@@ -119,10 +103,10 @@ class MediaHavenRestClient {
     }
 
     $upload_settings = array(
-        'file' => '@' . $media_file . ';filename=' . substr($media_file, strrpos($media_file, '/')+1),
-        'metadata' => '@' . $metadata_file,
-        'ingestSpaceId' => $ingestspace_id,
-        'autoPublish' => $autopublish,
+      'file' => '@' . $media_file . ';filename=' . substr($media_file, strrpos($media_file, '/') + 1),
+      'metadata' => '@' . $metadata_file,
+      'ingestSpaceId' => $ingestspace_id,
+      'autoPublish' => $autopublish,
     );
 
     $this->options[CURLOPT_URL] = $this->baseRestUrl . '/media';
@@ -133,8 +117,10 @@ class MediaHavenRestClient {
   }
 
   /**
-   *
+   * Execute the commands to the webservice.
    * @return boolean|mixed
+   *   False when incorrect response from webservice.
+   *   The response when correct response from webservice.
    */
   private function execute() {
     $curl = $this->initCurl();
@@ -149,10 +135,8 @@ class MediaHavenRestClient {
       $this->error = $response;
       return FALSE;
     }
-    else{
+    else {
       return $response;
     }
   }
 }
-
-

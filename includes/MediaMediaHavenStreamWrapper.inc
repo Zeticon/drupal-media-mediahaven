@@ -1,19 +1,16 @@
 <?php
-
 /**
- *  @file media_youtube/includes/MediaMediaHavenStreamWrapper.inc
+ * @file
+ * media_youtube/includes/MediaMediaHavenStreamWrapper.inc
  *
- *  Create a MediaHaven Stream Wrapper class for the Media/Resource module.
+ * Create a MediaHaven Stream Wrapper class for the Media/Resource module.
  */
 
 /**
- *  Create an instance like this:
- *  $youtube = new MediaMediaHavenStreamWrapper('mediahaven://f/[video-code]');
+ * Create an instance like this:
+ * $youtube = new MediaMediaHavenStreamWrapper('mediahaven://f/[video-code]');
  */
-
 class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
-
-
 
   /**
    * Returns a url in the format "TODO".
@@ -22,35 +19,50 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
    * This is an exact copy of the function in MediaReadOnlyStreamWrapper,
    * here in case that example is redefined or removed.
    */
-  function interpolateUrl() {
+  public function interpolateUrl() {
 
-    $this->base_url =  media_mediahaven_variable_get('url');
+    $this->base_url = media_mediahaven_variable_get('url');
 
-    //TODO we should make a different url for video
     if ($parameters = $this->get_parameters()) {
-      return  $this->base_url . '/index.php/embed/image?img=' . $parameters['f'];
+      return $this->base_url . '/index.php/embed/image?img=' . $parameters['f'];
     }
     else {
       return FALSE;
     }
   }
 
-  static function getMimeType($uri, $mapping = NULL) {
-    return 'application/octet-stream';//TODO What is this used for? do wee need to set specific mime types for the different object types?
+  /**
+   * Determine mime type for certain uri.
+   */
+  public static function getMimeType($uri, $mapping = NULL) {
+    return 'application/octet-stream';
   }
 
-  function getTarget($f) {
+  /**
+   * Overrides getTarget().
+   */
+  public function getTarget($f) {
     return FALSE;
   }
 
-  function getOriginalThumbnailPath() {
+  /**
+   * Function getOriginalThumbnailPath().
+   * @return string
+   *   The path to the thumbnail.
+   */
+  public function getOriginalThumbnailPath() {
     $parts = $this->get_parameters();
     $thumb_width = media_mediahaven_variable_get('thumb_width');
     $thumb_height = media_mediahaven_variable_get('thumb_height');
     return media_mediahaven_variable_get('url') . '/index.php/embed/image?img=' . $parts['f'] . '&w=' . $thumb_width . '&h=' . $thumb_height;
   }
 
-  function getLocalThumbnailPath() {
+  /**
+   * Determine thumbnail path.
+   * @return string
+   *   Path to thumbnail.
+   */
+  public function getLocalThumbnailPath() {
     $parts = $this->get_parameters();
 
     $local_path = file_default_scheme() . '://todo/' . check_plain($parts['f']) . '.jpg';
@@ -68,4 +80,3 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
     return $local_path;
   }
 }
-

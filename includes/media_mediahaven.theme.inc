@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- *   This file contains custom theming logic
+ * This file contains custom theming logic
  */
 
 /**
@@ -26,15 +27,18 @@ function theme_my_custom_html($variables) {
   return $output;
 }
 
+/**
+ * Show thumbnail for a MediaHaven file.
+ */
 function theme_media_mediahaven_thumbnail($variables) {
   $label = '';
   $element = $variables['element'];
 
   // Wrappers to go around the thumbnail.
   $attributes = array(
-      'title' => $element['#file']->filename,
-      'class' => 'media-item',
-      'data-fid' => $element['#file']->fid,
+    'title' => $element['#file']->filename,
+    'class' => 'media-item',
+    'data-fid' => $element['#file']->fid,
   );
   $prefix = '<div ' . drupal_attributes($attributes) . '><div class="media-thumbnail">';
   $suffix = '</div></div>';
@@ -44,14 +48,14 @@ function theme_media_mediahaven_thumbnail($variables) {
 
   // Arguments for the thumbnail link.
   $thumb = '<img src="' . str_replace('mediahaven://f/', media_mediahaven_variable_get('url') . '/index.php/embed/image?img=',
-      $element['#file']->uri) . '&w=100&h=100">';
-  //$thumb = $element['#children'];
+    $element['#file']->uri
+  ) . '&w=100&h=100">';
 
   $target = 'file/' . $element['#file']->fid . '/edit';
   $options = array(
-      'query' => drupal_get_destination(),
-      'html' => TRUE,
-      'attributes' => array('title' => t('Click to edit details')),
+    'query' => drupal_get_destination(),
+    'html' => TRUE,
+    'attributes' => array('title' => t('Click to edit details')),
   );
 
   // Element should be a field renderable array. This should be improved.

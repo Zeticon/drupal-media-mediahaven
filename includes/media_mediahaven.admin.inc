@@ -6,10 +6,13 @@
  *
  * Callback for /admin/configure/media/media_mediahaven.
  */
-include_once ('MediaHavenRestClient.inc');
-include_once ('media_mediahaven.variables.inc');
 
+include_once 'MediaHavenRestClient.inc';
+include_once 'media_mediahaven.variables.inc';
 
+/**
+ * Create a form to add media from MediaHaven.
+ */
 function media_mediahaven_add($form, &$form_state = array(), $redirect = NULL) {
   module_load_include('inc', 'media', 'includes/media.browser');
 
@@ -25,27 +28,26 @@ function media_mediahaven_add($form, &$form_state = array(), $redirect = NULL) {
   return array('mediahaven' => $data);
 }
 
+/**
+ * Generate search page.
+ */
 function media_mediahaven_generate_search($state) {
   $data = array(
-      '#type' => 'fieldset',
-      #'#title' => t('Search in Mediahaven'),
+    '#type' => 'fieldset',
   );
 
-  // used search string
   $search = media_mediahaven_search_string($state);
-  // selected facets
   $selected_facets = media_mediahaven_selected_facets($state);
   $facets_output = media_mediahaven_parse_selected_facets($selected_facets);
 
   $facets = media_mediahaven_search_facets($selected_facets, $search);
 
-  // search results
   $results = media_mediahaven_search_results($search, $selected_facets);
 
   $data['search'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Search'),
-      '#default_value' => $search !== NULL ? $search : ''
+    '#type' => 'textfield',
+    '#title' => t('Search'),
+    '#default_value' => $search !== NULL ? $search : '',
   );
 
   $data['selected_facets'] = $facets_output;
@@ -53,16 +55,16 @@ function media_mediahaven_generate_search($state) {
   $data['facets'] = media_mediahaven_generate_facets($facets);
 
   $data['button'] = array(
-      '#type' => 'button',
-      '#value' => t('Search'),
-      '#submit' => array('media_mediahaven_add_test')
+    '#type' => 'button',
+    '#value' => t('Search'),
+    '#submit' => array('media_mediahaven_add_test'),
   );
 
   if (isset($results['totalNrOfResults'])) {
     $data['total_results'] = array(
-        '#type' => 'html_tag',
-        '#tag' => 'h3',
-        '#value' => t('Total Results:') . $results['totalNrOfResults']
+      '#type' => 'html_tag',
+      '#tag' => 'h3',
+      '#value' => t('Total Results:') . $results['totalNrOfResults'],
     );
   }
 
@@ -73,6 +75,9 @@ function media_mediahaven_generate_search($state) {
   return $data;
 }
 
+/**
+ * Retrieve parameter from container.
+ */
 function media_mediahaven_parameter($container, $key, $default = NULL) {
   if (isset($container[$key])) {
     return $container[$key];
@@ -80,13 +85,14 @@ function media_mediahaven_parameter($container, $key, $default = NULL) {
   return $default;
 }
 
+/**
+ * Return entered search string.
+ */
 function media_mediahaven_search_string($state) {
   $search = NULL;
 
   if (isset($state['values']['search'])) {
     $search = $state['values']['search'];
-    //} elseif (isset($_POST['search'])) {
-    //	$search = $_POST['search'];
   }
   elseif (isset($_GET['search'])) {
     $search = check_plain(filter_xss($_GET['search']));
@@ -94,26 +100,33 @@ function media_mediahaven_search_string($state) {
   return $search;
 }
 
+/**
+ * Return selected facets.
+ */
 function media_mediahaven_selected_facets($state) {
   $selected_facets = array();
-  // array('fa' => 'atom', 'fl' => 'label', 'fk' => 'keyword')
 
   if (isset($state['values']['search'])) {
     return $selected_facets;
   }
 
-  if (isset($_GET['fa'])) $selected_facets = (array)$_GET['fa'];
+  if (isset($_GET['fa'])) {
+    $selected_facets = (array) $_GET['fa'];
+  }
 
   return $selected_facets;
 }
 
+/**
+ * Search with selected facets and a search term.
+ */
 function media_mediahaven_search_facets($selected_facets, $search_term) {
   $full_query = "";
   foreach ($selected_facets as $selected_facet) {
     $full_query .= $selected_facet;
   }
 
-  if (isset($search_term) && strlen($search_term)>0) {
+  if (isset($search_term) && strlen($search_term) > 0) {
     if (strlen($full_query) > 0) {
       $full_query .= ' ';
     }
@@ -134,19 +147,26 @@ function media_mediahaven_search_facets($selected_facets, $search_term) {
   }
 }
 
+/**
+ * Parse the selected facets.
+ */
 function media_mediahaven_parse_selected_facets($selected_facets) {
-  if (!$selected_facets) return FALSE;
-  if (!$selected_facets[0]) return FALSE;
+  if (!$selected_facets) {
+    return FALSE;
+  }
+  if (!$selected_facets[0]) {
+    return FALSE;
+  }
 
   $pattern = '/\+dtag\:\"root>([A-Za-z0-9 ]*)>([A-Za-z0-9 ]*)\"/';
   preg_match_all($pattern, $selected_facets[0], $matches);
 
   if (!empty($matches)) {
     $selected_facet_list = array(
-        '#theme' => 'item_list',
-        '#type' => 'ul',
-        '#title' => t('Selected Facets'),
-        '#attributes' => array('class' => 'selected_facet_list'),
+      '#theme' => 'item_list',
+      '#type' => 'ul',
+      '#title' => t('Selected Facets'),
+      '#attributes' => array('class' => 'selected_facet_list'),
     );
 
     foreach ($matches[0] as $key => $match) {
@@ -159,28 +179,30 @@ function media_mediahaven_parse_selected_facets($selected_facets) {
   return FALSE;
 }
 
+/**
+ * Generate facets.
+ */
 function media_mediahaven_generate_facets($facets) {
-  if (empty($facets)) return array();
-
-  // name => string (keyword)
-  // title => string
-  // results => int
-  // values => array
+  if (empty($facets)) {
+    return array();
+  }
 
   $facets_list = array(
-      '#theme' => 'item_list',
-      '#type' => 'ul',
-      '#title' => t('Selectable Facets'),
-      '#attributes' => array('class' => 'facet_list'),
+    '#theme' => 'item_list',
+    '#type' => 'ul',
+    '#title' => t('Selectable Facets'),
+    '#attributes' => array('class' => 'facet_list'),
   );
 
   foreach ($facets as $facet_category) {
     $children = media_mediahaven_generate_facets_link($facet_category['value']);
 
-    $facet_category = array('data'  => $facet_category['title'],
-        'id'  => $facet_category['name'],
-        'class'  => array('facet_title'),
-        'children'  => $children
+    $facet_category = array(
+      'data' => $facet_category['title'],
+      'id' => $facet_category['name'],
+      'class' => array(
+        'facet_title'),
+      'children' => $children,
     );
     $facets_list['#items'][] = $facet_category;
   }
@@ -188,25 +210,25 @@ function media_mediahaven_generate_facets($facets) {
   return $facets_list;
 }
 
+/**
+ * Generate links for facets.
+ */
 function media_mediahaven_generate_facets_link($facets) {
   $max_facets = 5;
-  //	label
-  //	atom
-  //	query
-  //	count
   $facet_links = array();
 
   foreach ($facets as $facet_item) {
-    $facet_links[] = '<a href="' . '?fa[]=' . media_mediahaven_parse_facet_link($facet_item['query']) . '">'
-        . htmlentities($facet_item['label'])
-        . '</a> (' . $facet_item['count'] . ')';
+    $facet_links[] = '<a href="' . '?fa[]=' . media_mediahaven_parse_facet_link($facet_item['query']) . '">' . htmlentities($facet_item['label']) . '</a> (' . $facet_item['count'] . ')';
   }
-  if (count($facet_links)>$max_facets) {
+  if (count($facet_links) > $max_facets) {
     $facet_links = array_slice($facet_links, 0, $max_facets);
   }
   return $facet_links;
 }
 
+/**
+ * Parse the facet link.
+ */
 function media_mediahaven_parse_facet_link($query) {
   $pattern = '/\+\([A-Za-z0-9 ]*\)/';
   preg_match($pattern, $query, $matches);
@@ -218,13 +240,24 @@ function media_mediahaven_parse_facet_link($query) {
   return $query;
 }
 
+/**
+ * Perform the search.
+ *
+ * @param unknown $search
+ *   the query entered.
+ * @param unknown $selected_facets
+ *   the selected facets.
+ *
+ * @return mixed
+ *   the search results.
+ */
 function media_mediahaven_search_results($search, $selected_facets) {
   $start_index = 0;
-  $nr_of_results  = 25;
+  $nr_of_results = 25;
   $query = '';
 
   if (isset($_GET['page'])) {
-    $current_page = (int)filter_xss($_GET['page']);
+    $current_page = (int) filter_xss($_GET['page']);
     $start_index = $current_page * $nr_of_results;
   }
 
@@ -249,15 +282,24 @@ function media_mediahaven_search_results($search, $selected_facets) {
   return $arr_json;
 }
 
+/**
+ * Organize results from search engine to visualize them.
+ */
 function media_mediahaven_generate_results($results) {
-  if (isset($results['totalNrOfResults'])) unset($results['totalNrOfResults']);
-  if (isset($results['startIndex'])) unset($results['startIndex']);
+  if (isset($results['totalNrOfResults'])) {
+    unset($results['totalNrOfResults']);
+  }
+
+  if (isset($results['startIndex'])) {
+    unset($results['startIndex']);
+  }
+
   $results = $results['mediaDataList'];
 
   $output = array(
-      '#theme' => 'item_list',
-      '#type' => 'ul',
-      '#attributes' => array('class' => 'result_list'),
+    '#theme' => 'item_list',
+    '#type' => 'ul',
+    '#attributes' => array('class' => 'result_list'),
   );
 
   if (!empty($results)) {
@@ -272,42 +314,60 @@ function media_mediahaven_generate_results($results) {
   return $output;
 }
 
+/**
+ * Show search result.
+ */
 function _generate_result_current($media_item) {
-  if ($media_item['previewImagePath']=='') return FALSE;
+  if ($media_item['previewImagePath'] == '') {
+    return FALSE;
+  }
 
   $variables = array();
   $variables['path'] = $media_item['previewImagePath'];
   $variables['width'] = media_mediahaven_variable_get('thumb_width');
   $variables['height'] = media_mediahaven_variable_get('thumb_height');
 
-  //return theme('image', $variables);
-  //current_path() . '?uuid=
-
-  return l('<img width="' . $variables['width'] . '" height="' . $variables['height'] . '" src="' . $media_item['thumbnailImagePath'] . '"/><span class="media_object_type_' . $media_item['type'] . '">' . t($media_item['type']) . '</span>'
-      , 'admin/content/media/add/media_mediahaven/'
-      , array('attributes' => array('class' => 'anchor-class', 'rel' => $media_item['fragmentId'])
-          , 'html' => TRUE
-          , 'query' => array('uuid' =>  $media_item['fragmentId'] )));
-
+  return l('<img width="' . $variables['width'] .
+      '" height="' . $variables['height'] . '" src="' .
+      $media_item['thumbnailImagePath'] . '"/>
+      <span class="media_object_type_' . $media_item['type'] . '">'
+      . t($media_item['type']) . '</span>', 'admin/content/media/add/media_mediahaven/',
+      array(
+        'attributes' => array('class' => 'anchor-class', 'rel' => $media_item['fragmentId']),
+        'html' => TRUE,
+        'query' => array('uuid' => $media_item['fragmentId']),
+      )
+  );
 }
 
+/**
+ * Generate paging functionality.
+ */
 function media_mediahaven_generate_pager($num_results, $element = 0, $parameters = array()) {
-  //zoekwaard uit link overschrijven met search
-  if (isset($_POST['search'])) $_GET['search'] = filter_xss(check_plain($_POST['search']));
+  if (isset($_POST['search'])) {
+    $_GET['search'] = filter_xss(check_plain($_POST['search']));
+  }
 
   pager_default_initialize($num_results, MEDIA_MEDIAHAVEN_PAGER, $element);
-  return array('#markup' => theme('pager', array('parameters' => $parameters, 'element' => $element)));
+  return array(
+    '#markup' => theme(
+        'pager',
+        array(
+          'parameters' => $parameters,
+          'element' => $element,
+        )
+    ),
+  );
 }
 
 
-
-// save file
+/**
+ * Submit the selected media object.
+ */
 function media_mediahaven_submit_mob(&$form, &$form_state) {
   $uuid = media_mediahaven_parameter($_GET, 'uuid');
 
   $redirect = 'media_mediahaven_add';
-
-  // alle info van het mediaobject ophalen
 
   $rest_client = media_mediahaven_rest_client();
   $result = $rest_client->getMediaObject($uuid);
@@ -320,17 +380,15 @@ function media_mediahaven_submit_mob(&$form, &$form_state) {
     return FALSE;
   }
 
-  // Check database for this uri
   $uri = file_stream_wrapper_uri_normalize("mediahaven://f/$uuid");
   $file = file_uri_to_object($uri, TRUE);
-  if ($arr_json['type']=='Image') {
+  if ($arr_json['type'] == 'Image') {
     $file->filemime = 'image/jpeg';
   }
-  elseif ($arr_json['type']=='Video') {
+  elseif ($arr_json['type'] == 'Video') {
     $file->filemime = 'video/mp4';
   }
 
-  //$file->filemime = file_get_mimetype($uri);
   $file->filesize = @filesize($uri);
   $file->filename = $arr_json['title'];
 
@@ -348,7 +406,6 @@ function media_mediahaven_submit_mob(&$form, &$form_state) {
       $redirect = "media/{$file->fid}/edit";
     }
 
-    // I do not understand the block below
     field_attach_submit('media', $file, $form, $form_state);
     // Make a copy of the file object to use as the media object
     // (file is a field of media and the base table). This is weird.
@@ -360,170 +417,146 @@ function media_mediahaven_submit_mob(&$form, &$form_state) {
     drupal_set_message(t('Successfully added media'));
   }
   else {
-    // Already exists
     drupal_set_message(t('Already exists'), 'warning');
-    //drupal_goto("media/{$file->fid}/edit");
   }
   $form_state['values']['redirect'] = $redirect;
   $form['#attributes']['target'] = '_parent';
-
 }
 
 /**
- * Page callback: Current posts settings
+ * Page callback: Current posts settings.
  *
  * @see current_posts_menu()
  */
 function media_mediahaven_form($form, &$form_state) {
   $form['media_mediahaven_settings'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('MediaHaven API'),
-      '#description' => t('You will first need to apply for an API Developer Key'),
-      '#collapsible' => TRUE,
+    '#type' => 'fieldset',
+    '#title' => t('MediaHaven API'),
+    '#description' => t('You will first need to apply for an API Developer Key'),
+    '#collapsible' => TRUE,
   );
 
-  $form['media_mediahaven_settings'][media_mediahaven_variable_name('login')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('MediaHaven login'),
-      '#default_value' => media_mediahaven_variable_get('login'),
-      '#size' => 25,
-      '#description' => t('The login to be used by the module to communicate with MediaHaven.'),
-      '#required' => TRUE,
+  $form['media_mediahaven_settings'][media_mediahaven_variable_name('login')] = array(
+    '#type' => 'textfield',
+    '#title' => t('MediaHaven login'),
+    '#default_value' => media_mediahaven_variable_get('login'),
+    '#size' => 25,
+    '#description' => t('The login to be used by the module to communicate with MediaHaven.'),
+    '#required' => TRUE,
   );
-  $form['media_mediahaven_settings'][media_mediahaven_variable_name('password')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('MediaHaven password'),
-      '#default_value' => media_mediahaven_variable_get('password'),
-      '#size' => 25,
-      '#description' => t('The password to be used by the module to communicate with MediaHaven.'),
-      '#required' => TRUE,
+  $form['media_mediahaven_settings'][media_mediahaven_variable_name('password')] = array(
+    '#type' => 'textfield',
+    '#title' => t('MediaHaven password'),
+    '#default_value' => media_mediahaven_variable_get('password'),
+    '#size' => 25,
+    '#description' => t('The password to be used by the module to communicate with MediaHaven.'),
+    '#required' => TRUE,
   );
 
-  $form['media_mediahaven_settings'][media_mediahaven_variable_name('url')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('MediaHaven url'),
-      '#default_value' => media_mediahaven_variable_get('url'),
-      '#size' => 50,
-      '#description' => t('The MediaHaven url.'),
-      '#required' => TRUE,
+  $form['media_mediahaven_settings'][media_mediahaven_variable_name('url')] = array(
+    '#type' => 'textfield',
+    '#title' => t('MediaHaven url'),
+    '#default_value' => media_mediahaven_variable_get('url'),
+    '#size' => 50,
+    '#description' => t('The MediaHaven url.'),
+    '#required' => TRUE,
   );
 
-  //second form to store upload settings: departement to be used, auto publish, ...
   $form['media_mediahaven_upload_settings'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('MediaHaven Upload settings'),
-      '#description' => t('Manage the configuration that will be used when you upload files to MediaHaven'),
-      '#collapsible' => TRUE,
+    '#type' => 'fieldset',
+    '#title' => t('MediaHaven Upload settings'),
+    '#description' => t('Manage the configuration that will be used when you upload files to MediaHaven'),
+    '#collapsible' => TRUE,
   );
 
-  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('ingestspace_id')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('Ingestspace id'),
-      '#default_value' => media_mediahaven_variable_get('ingestspace_id'),
-      '#size' => 50,
-      '#description' => t('The MediaHaven ingestspace that will be used to upload files to.'),
-      '#required' => FALSE,
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('ingestspace_id')] = array(
+    '#type' => 'textfield',
+    '#title' => t('Ingestspace id'),
+    '#default_value' => media_mediahaven_variable_get('ingestspace_id'),
+    '#size' => 50,
+    '#description' => t('The MediaHaven ingestspace that will be used to upload files to.'),
+    '#required' => FALSE,
   );
 
-  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('autopublish')] =
-  array(
-      '#type' => 'checkbox',
-      '#title' => t('Auto publish'),
-      '#default_value' => media_mediahaven_variable_get('autopublish'),
-      '#size' => 50,
-      '#description' => t('When enabled files will be automatically published after processing.
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('autopublish')] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Auto publish'),
+    '#default_value' => media_mediahaven_variable_get('autopublish'),
+    '#size' => 50,
+    '#description' => t('When enabled files will be automatically published after processing.
           If disabled a user will have to manually publish them using the
           mediahaven media management software'),
-
   );
-  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('department_id')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('Department id'),
-      '#default_value' => media_mediahaven_variable_get('department_id'),
-      '#size' => 50,
-      '#description' => t('The default department where uploaded files will belong to.
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('department_id')] = array(
+    '#type' => 'textfield',
+    '#title' => t('Department id'),
+    '#default_value' => media_mediahaven_variable_get('department_id'),
+    '#size' => 50,
+    '#description' => t('The default department where uploaded files will belong to.
           This will be used when autopublishing is enabled'),
-      '#required' => FALSE,
+    '#required' => FALSE,
   );
 
   $form['media_mediahaven_rights_settings'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('MediaHaven Rights settings'),
-      '#description' => t('Manage rights and copyright notice for media from Mediahaven'),
-      '#collapsible' => TRUE,
+    '#type' => 'fieldset',
+    '#title' => t('MediaHaven Rights settings'),
+    '#description' => t('Manage rights and copyright notice for media from Mediahaven'),
+    '#collapsible' => TRUE,
   );
-  $form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights_owner')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('Rights owner'),
-      '#default_value' => media_mediahaven_variable_get('rights_owner'),
-      '#size' => 50,
-      '#description' => t('The rights owner for media uploaded to Mediahaven.'),
-      '#required' => TRUE,
+  $form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights_owner')] = array(
+    '#type' => 'textfield',
+    '#title' => t('Rights owner'),
+    '#default_value' => media_mediahaven_variable_get('rights_owner'),
+    '#size' => 50,
+    '#description' => t('The rights owner for media uploaded to Mediahaven.'),
+    '#required' => TRUE,
   );
-  $form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('Rights'),
-      '#default_value' => media_mediahaven_variable_get('rights'),
-      '#size' => 50,
-      '#description' => t('The rights for using and ditributing the uploaded media.'),
-      '#required' => TRUE,
+  $form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights')] = array(
+    '#type' => 'textfield',
+    '#title' => t('Rights'),
+    '#default_value' => media_mediahaven_variable_get('rights'),
+    '#size' => 50,
+    '#description' => t('The rights for using and ditributing the uploaded media.'),
+    '#required' => TRUE,
   );
-  $form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('copyright')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('Copyright Notice'),
-      '#default_value' => media_mediahaven_variable_get('copyright'),
-      '#size' => 50,
-      '#description' => t('Copyright notice for media uploaded to Mediahaven.'),
-      '#required' => TRUE,
+  $form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('copyright')] = array(
+    '#type' => 'textfield',
+    '#title' => t('Copyright Notice'),
+    '#default_value' => media_mediahaven_variable_get('copyright'),
+    '#size' => 50,
+    '#description' => t('Copyright notice for media uploaded to Mediahaven.'),
+    '#required' => TRUE,
   );
 
-
-  //third form to store the thumbnail settings: dimensions
+  // Third form to store the thumbnail settings: dimensions.
   $form['media_mediahaven_thumbnail_settings'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('MediaHaven Thumbnail settings'),
-      '#description' => t('Manage the configuration that will to dispaly the MediaHaven thumbnails'),
-      '#collapsible' => TRUE,
+    '#type' => 'fieldset',
+    '#title' => t('MediaHaven Thumbnail settings'),
+    '#description' => t('Manage the configuration that will to dispaly the MediaHaven thumbnails'),
+    '#collapsible' => TRUE,
   );
-  $form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_width')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('Thumb_width'),
-      '#default_value' => media_mediahaven_variable_get('thumb_width'),
-      '#size' => 5,
-      '#description' => t('Width of the thumbnails (in px)'),
-      '#required' => TRUE,
+  $form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_width')] = array(
+    '#type' => 'textfield',
+    '#title' => t('Thumb_width'),
+    '#default_value' => media_mediahaven_variable_get('thumb_width'),
+    '#size' => 5,
+    '#description' => t('Width of the thumbnails (in px)'),
+    '#required' => TRUE,
   );
-  $form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_height')] =
-  array(
-      '#type' => 'textfield',
-      '#title' => t('Thumb_height'),
-      '#default_value' => media_mediahaven_variable_get('thumb_height'),
-      '#size' => 5,
-      '#description' => t('Height of the thumbnails (in px)'),
-      '#required' => TRUE,
+  $form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_height')] = array(
+    '#type' => 'textfield',
+    '#title' => t('Thumb_height'),
+    '#default_value' => media_mediahaven_variable_get('thumb_height'),
+    '#size' => 5,
+    '#description' => t('Height of the thumbnails (in px)'),
+    '#required' => TRUE,
   );
 
   return system_settings_form($form);
 }
 
-
 /**
  * Implements validation from the Form API.
- *
- * @param $form
- *   A structured array containing the elements and properties of the form.
- * @param $form_state
- *   An array that stores information about the form's current state
- *   during processing.
  */
 function media_mediahaven_form_validate($form, &$form_state) {
 
@@ -543,12 +576,16 @@ function media_mediahaven_form_validate($form, &$form_state) {
 }
 
 /**
- * Validate uuid
+ * Validate uuid.
  */
 function media_mediahaven_validate_uuid($uuid = FALSE) {
-  if ($uuid === FALSE) return FALSE;
+  if ($uuid === FALSE) {
+    return FALSE;
+  }
 
-  if (preg_match('/^\{?[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}\}?$/', $uuid)) {
+  if (preg_match(
+      '/^\{?[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-
+      [A-Za-z0-9]{4}-[A-Za-z0-9]{12}\}?$/', $uuid)) {
     return TRUE;
   }
   else {

@@ -90,4 +90,4 @@ Usage of the module
 In order to include media from Mediahaven into Drupal, go to Content and click the link "Add Media from Mediahaven".
 Enter a search term and/or click any of the provided facets.
 Select an by clicking on the image.
-A confirmation "Succesfully added media" will be shown and the media file will be available for usage under the "Files" tab.
+A confirmation "Successfully added media" will be shown and the media file will be available for usage under the "Files" tab.
