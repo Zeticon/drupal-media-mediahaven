@@ -9,7 +9,6 @@
  * Wraps an element in an extra div.
  */
 function theme_my_element_wrapper($element) {
-  $element = $variables['element'];
   $output = '<div class="element-wrapper">';
   $output .= $element['#children'];
   $output .= '</div>';
@@ -23,7 +22,7 @@ function theme_my_custom_html($variables) {
   $foo = $variables['foo'];
   $output = '<div class="type-foo clearfix">';
   $output .= $foo;
-  $ouptut .= '</div>';
+  $output .= '</div>';
   return $output;
 }
 
@@ -42,9 +41,6 @@ function theme_media_mediahaven_thumbnail($variables) {
   );
   $prefix = '<div ' . drupal_attributes($attributes) . '><div class="media-thumbnail">';
   $suffix = '</div></div>';
-
-  $thumb_width = media_mediahaven_variable_get('thumb_width');
-  $thumb_height = media_mediahaven_variable_get('thumb_height');
 
   // Arguments for the thumbnail link.
   $thumb = '<img src="' . str_replace('mediahaven://f/', media_mediahaven_variable_get('url') . '/index.php/embed/image?img=',
