@@ -112,10 +112,7 @@ function media_mediahaven_file_formatter_video_view($file, $display, $langcode) 
   $scheme = file_uri_scheme($file->uri);
 
   if ($scheme == 'mediahaven') {
-    $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri);
-    $image_style = $display['settings']['image_style'];
-
-    $element = array(
+     $element = array(
       '#theme' => 'media_mediahaven_video',
       '#uri' => $file->uri,
       '#options' => array(),
