@@ -12,10 +12,7 @@ dependencies[] = plupload
 
 files[] = includes/MediaHavenRestClient.inc
 files[] = includes/MediaMediaHavenBrowser.inc
-files[] = includes/media_mediahaven.admin.inc
-files[] = includes/media_mediahaven.upload.inc
 files[] = includes/MediaMediaHavenStreamWrapper.inc
-files[] = includes/media_mediahaven.utils.inc
+
 
 configure = admin/config/content/media_mediahaven
-

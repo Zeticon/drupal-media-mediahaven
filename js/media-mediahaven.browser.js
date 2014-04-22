@@ -20,8 +20,7 @@
 //
 //      // Catch the click on a media item
 //      $('.result_list li a').bind('click', function (e) {
-//		e.preventDefault();
-//		
+//		e.preventDefault();		
 //		var uuid = $(this).attr('rel');
 //		var uri = 'mediahaven://f/' + uuid;
 //		var file = Drupal.settings.media.files[uri];

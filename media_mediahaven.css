@@ -1,24 +1,23 @@
-.item-list .result_list {margin:0px;}
-.item-list .result_list li {display:inline-block;margin:5px;position:relative;}
-.item-list .result_list li img {cursor:pointer}
+.item-list .result_list {  margin:0px;}
+.item-list .result_list li {  display:inline-block;margin:5px;position:relative;}
+.item-list .result_list li img {  cursor:pointer}
 
-.item-list .facet_list {margin:0px;}
-.item-list .facet_list .facet_title {list-style-type:none;}
-.item-list .facet_list .facet_title ul {margin:0px;}
-.item-list .facet_list .facet_title ul li {display:inline-block;padding:1px 5px;background:#CCC;margin-bottom:3px;}
+.item-list .facet_list {  margin:0px;}
+.item-list .facet_list .facet_title {  list-style-type:none;}
+.item-list .facet_list .facet_title ul {  margin:0px;}
+.item-list .facet_list .facet_title ul li {  display:inline-block;padding:1px 5px;background:#CCC;margin-bottom:3px;}
 
-.media_object_type_Video {background:#CCCCCC;top:0px;left:0px;position:absolute;padding:2px 5px;}
-.media_object_type_Audio {background:#CCCCCC;top:0px;left:0px;position:absolute;padding:2px 5px;}
-.media_object_type_Image {display:none;visibility:hidden;}
+.media_object_type_Video {  background:#CCCCCC;top:0px;left:0px;position:absolute;padding:2px 5px;}
+.media_object_type_Audio {  background:#CCCCCC;top:0px;left:0px;position:absolute;padding:2px 5px;}
+.media_object_type_Image {  display:none;visibility:hidden;}
 
 #file-entity-edit  .media_object_type_Video, 
 #file-entity-edit  .media_object_type_Audio, 
 #file-entity-edit  .media_object_type_Image {
-	display:none;visibility:hidden;
-}
+	display:none;visibility:hidden;}
 
-#media-browser-library-list  li {display:inline-block;margin:5px;position:relative;}
-#container #scrollbox {padding-top:10px;clear:both;}
-#edit-actions {padding-top:10px;clear:both;}
+#media-browser-library-list  li {  display:inline-block;margin:5px;position:relative;}
+#container #scrollbox {  padding-top:10px;clear:both;}
+#edit-actions {  padding-top:10px;clear:both;}
 
-.media_object_wrapper {position:relative;}
+.media_object_wrapper {  position:relative;}
