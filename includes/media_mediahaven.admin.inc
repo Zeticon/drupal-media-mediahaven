@@ -304,7 +304,7 @@ function media_mediahaven_generate_results($results) {
 
   if (!empty($results)) {
     foreach ($results as $media_item) {
-      $output['#items'][] = _generate_result_current($media_item);
+      $output['#items'][] = media_mediahaven_generate_result_current($media_item);
     }
   }
   else {
@@ -317,7 +317,7 @@ function media_mediahaven_generate_results($results) {
 /**
  * Show search result.
  */
-function _generate_result_current($media_item) {
+function media_mediahaven_generate_result_current($media_item) {
   if ($media_item['previewImagePath'] == '') {
     return FALSE;
   }
