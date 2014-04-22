@@ -20,11 +20,10 @@
 //
 //      // Catch the click on a media item
 //      $('.result_list li a').bind('click', function (e) {
-//		e.preventDefault();		
+//		e.preventDefault();
 //		var uuid = $(this).attr('rel');
 //		var uri = 'mediahaven://f/' + uuid;
 //		var file = Drupal.settings.media.files[uri];
-//		
 //        var files = new Array();
 //        files.push(file);
 //        Drupal.media.browser.selectMedia(files);
@@ -58,7 +57,7 @@
         $(this).addClass('selected');
         // Add this FID to the array of selected files
         var uri = $(this).parent('a[data-uri]').attr('data-uri');
-        
+
         // Get the file from the settings which was stored in
         // template_preprocess_media_views_view_media_browser()
         var file = Drupal.settings.media.files[uri];

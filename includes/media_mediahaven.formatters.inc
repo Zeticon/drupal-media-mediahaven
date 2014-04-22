@@ -112,7 +112,7 @@ function media_mediahaven_file_formatter_video_view($file, $display, $langcode) 
   $scheme = file_uri_scheme($file->uri);
 
   if ($scheme == 'mediahaven') {
-     $element = array(
+    $element = array(
       '#theme' => 'media_mediahaven_video',
       '#uri' => $file->uri,
       '#options' => array(),

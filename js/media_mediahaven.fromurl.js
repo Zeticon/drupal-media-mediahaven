@@ -74,7 +74,7 @@
         var params = {
           conditions: JSON.stringify(this.getConditions()),
           streams: JSON.stringify(this.getStreams())
-	    };
+       };
         jQuery.get(
           callback,
           params,
