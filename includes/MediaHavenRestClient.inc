@@ -7,7 +7,7 @@
 
 class MediaHavenRestClient {
 
-  public $base_rest_url;
+  public $baseRestUrl;
   protected $options = array();
   protected $error = '';
   const SUPPORTED_MEDIATYPES_QUERY = '+(MediaObjectType:Video OR MediaObjectType:Image)';
@@ -15,8 +15,8 @@ class MediaHavenRestClient {
   /**
    * Constructor.
    */
-  public function __construct($base_rest_url, $login, $password) {
-    $this->base_rest_url = $base_rest_url;
+  public function __construct($baseRestUrl, $login, $password) {
+    $this->baseRestUrl = $baseRestUrl;
     $this->options = array(
       CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
       CURLOPT_USERPWD => $login . ":" . $password,
@@ -40,7 +40,7 @@ class MediaHavenRestClient {
   /**
    * Initialize curl with the provided options.
    */
-  private function initCurl() {
+  protected function initCurl() {
     $curl = curl_init();
     foreach ($this->options as $option => $value) {
       curl_setopt($curl, $option, $value);
@@ -60,7 +60,7 @@ class MediaHavenRestClient {
     }
     $query = urlencode($query);
 
-    $url = $this->base_rest_url . '/media?q=' . $query;
+    $url = $this->baseRestUrl . '/media?q=' . $query;
     if (isset($start_index) && strlen($start_index) > 0) {
       $url .= '&startIndex=' . $start_index;
     }
@@ -76,7 +76,7 @@ class MediaHavenRestClient {
    * Retrieve a mediaobject based on an id.
    */
   public function getMediaObject($id) {
-    $this->options[CURLOPT_URL] = $this->base_rest_url . '/media/' . $id;
+    $this->options[CURLOPT_URL] = $this->baseRestUrl . '/media/' . $id;
     return $this->execute();
   }
 
@@ -87,7 +87,7 @@ class MediaHavenRestClient {
     if (strpos($query, self::SUPPORTED_MEDIATYPES_QUERY) == FALSE) {
       $query .= self::SUPPORTED_MEDIATYPES_QUERY;
     }
-    $this->options[CURLOPT_URL] = $this->base_rest_url . '/facets?q=' . urlencode($query);
+    $this->options[CURLOPT_URL] = $this->baseRestUrl . '/facets?q=' . urlencode($query);
     return $this->execute();
   }
 
@@ -109,7 +109,7 @@ class MediaHavenRestClient {
       'autoPublish' => $autopublish,
     );
 
-    $this->options[CURLOPT_URL] = $this->base_rest_url . '/media';
+    $this->options[CURLOPT_URL] = $this->baseRestUrl . '/media';
     $this->options[CURLOPT_POST] = 1;
     $this->options[CURLOPT_POSTFIELDS] = $upload_settings;
 
@@ -122,7 +122,7 @@ class MediaHavenRestClient {
    *   False when incorrect response from webservice.
    *   The response when correct response from webservice.
    */
-  private function execute() {
+  protected function execute() {
     $curl = $this->initCurl();
     $response = curl_exec($curl);
     $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
