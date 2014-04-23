@@ -345,7 +345,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   module_load_include('inc', 'media', 'includes/media.browser');
 
   // Our search term can come from the form, or from the pager.
-  $term = isset($form_state['input']['search']) ? $form_state['input']['search'] : (isset($_GET['search']) ? $_GET['search'] : '');
+  $term = isset($form_state['values']['search']) ? $form_state['values']['search'] : (isset($_GET['search']) ? $_GET['search'] : '');
 
   $form['search'] = array(
     '#type' => 'textfield',
@@ -360,7 +360,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
 
   // This is our half-assed pager.
   $page = isset($_GET['page-yt']) ? $_GET['page-yt'] : 0;
-  if (isset($form_state['input']['search'])) {
+  if (isset($form_state['values']['search'])) {
     // Reset the pager when we press apply.
     $page = 0;
   }
