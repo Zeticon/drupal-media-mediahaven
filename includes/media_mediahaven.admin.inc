@@ -583,9 +583,7 @@ function media_mediahaven_validate_uuid($uuid = FALSE) {
     return FALSE;
   }
 
-  if (preg_match(
-      '/^\{?[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-
-      [A-Za-z0-9]{4}-[A-Za-z0-9]{12}\}?$/', $uuid)) {
+  if (preg_match('/^\{?[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}\}?$/', $uuid)) {
     return TRUE;
   }
   else {
