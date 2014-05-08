@@ -93,7 +93,7 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       $metadata_file = substr($destination, 0, strrpos($destination, '.')) . '.xml';
       media_mediahaven_generate_metadata($metadata_file, $metadata);
 
-      $rest_client = get_mediahaven_rest_client();
+      $rest_client = media_mediahaven_rest_client();
       $result = $rest_client->upload($destination, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
 
       file_unmanaged_delete($destination);
