@@ -92,9 +92,10 @@ Enter a search term and/or click any of the provided facets.
 Select an by clicking on the image.
 A confirmation "Successfully added media" will be shown and the media file will be available for usage under the "Files" tab.
 
-Testing the module
+Test environment
 -------------------
-The module and the rest-api webservices can be tested against an integration platform: https://integration.mediahaven.com
+The module and the rest-api webservices can be tested against an integration platform: https://integration.mediahaven.com . This setup will be reset every day at 6am CET, so keep in mind that your data will be lost and that the environment will be unavailable during 10 to 15 minutes.
+
 
 Following credentials can be used:  
 * login: apikey  
