@@ -96,8 +96,8 @@ Testing the module
 -------------------
 The module and the rest-api webservices can be tested against an integration platform: https://integration.mediahaven.com
 
-Following credentials can be used:
-login: apikey
-password: apikey
+Following credentials can be used: 
+login: apikey 
+password: apikey 
 
 The rest webservices url: https://integration.mediahaven.com/mediahaven-rest-api/
