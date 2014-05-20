@@ -91,3 +91,13 @@ In order to include media from Mediahaven into Drupal, go to Content and click t
 Enter a search term and/or click any of the provided facets.
 Select an by clicking on the image.
 A confirmation "Successfully added media" will be shown and the media file will be available for usage under the "Files" tab.
+
+Testing the module
+-------------------
+The module and the rest-api webservices can be tested against an integration platform: https://integration.mediahaven.com
+
+Following credentials can be used:
+login: apikey
+password: apikey
+
+The rest webservices url: https://integration.mediahaven.com/mediahaven-rest-api/
