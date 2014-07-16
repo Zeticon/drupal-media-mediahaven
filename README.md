@@ -97,7 +97,8 @@ Test environment
 The module and the rest-api webservices can be tested against an integration platform: https://integration.mediahaven.com . This setup will be reset every day at 6am CET, so keep in mind that your data will be lost and that the environment will be unavailable during 10 to 15 minutes.
 
 
-Following credentials can be used:  
+Following configuration settings can be used: 
+* url: https://integration.mediahaven.com/
 * login: apikey  
 * password: apikey 
 * ingestspace_id : 5ebefe86-279c-4e19-857c-23ec0e975278
