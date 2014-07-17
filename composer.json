@@ -1,0 +1,5 @@
+{
+    "name": "zeticon/drupal-media-mediahaven",
+    "type": "drupal-module",
+    "description": "A Drupal module to integrate MediaHaven with the Media module"
+}
