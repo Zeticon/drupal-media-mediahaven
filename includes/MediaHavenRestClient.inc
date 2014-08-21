@@ -77,6 +77,7 @@ class MediaHavenRestClient {
    */
   public function getMediaObject($id) {
     $this->options[CURLOPT_URL] = $this->baseRestUrl . '/media/' . $id;
+    //var_dump($this->options);
     return $this->execute();
   }
 

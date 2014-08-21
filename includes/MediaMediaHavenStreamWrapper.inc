@@ -10,6 +10,8 @@
  * Create an instance like this:
  * $youtube = new MediaMediaHavenStreamWrapper('mediahaven://f/[video-code]');
  */
+ //include_once 'media_mediahaven.utils.inc';
+ 
 class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
 
   /**
@@ -24,7 +26,7 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
     $this->base_url = media_mediahaven_variable_get('url');
 
     if ($parameters = $this->get_parameters()) {
-      return $this->base_url . '/index.php/embed/image?img=' . $parameters['f'];
+      return media_mediahaven_embed_url($parameters['f']);
     }
     else {
       return FALSE;
@@ -52,9 +54,17 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
    */
   public function getOriginalThumbnailPath() {
     $parts = $this->get_parameters();
+    $rest = media_mediahaven_rest_client();
+    $media_object = json_decode($rest->getMediaObject($parts['f']), TRUE);
+   // var_dump($media_object); die;
+    if ($media_object) {
+      return $media_object['thumbnailImagePath'];
+    }
     $thumb_width = media_mediahaven_variable_get('thumb_width');
     $thumb_height = media_mediahaven_variable_get('thumb_height');
-    return media_mediahaven_variable_get('url') . '/index.php/embed/image?img=' . $parts['f'] . '&w=' . $thumb_width . '&h=' . $thumb_height;
+    $url =  media_mediahaven_embed_url($parts['f']);
+    $url.= '?w=' . $thumb_width . '&h=' . $thumb_height;
+    return $url;
   }
 
   /**

@@ -146,3 +146,16 @@ function media_mediahaven_uri_parse_fragmentid($uri) {
     $index++;
   }
 }
+
+/**
+ * create the embed uri for a fragment.
+ */
+function media_mediahaven_embed_url($fragment_id) {
+  $base_url = media_mediahaven_variable_get('url');
+  if (substr($base_url, -1) != '/') {
+        $base_url .= '/';
+      }    
+  $base_url .= 'index.php/embed/' . $fragment_id;
+  
+  return $base_url;
+}
