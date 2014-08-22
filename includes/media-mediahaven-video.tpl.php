@@ -20,5 +20,5 @@
  */
 ?>
 <div class="<?php print $classes; ?>">
-  <iframe title="" src="<?php echo media_mediahaven_variable_get('url'); ?>/index.php/embed/<?php print $umid; ?>" frameborder="0" width="<?php print $video_width; ?>" height="<?php print $video_height; ?>"  allowfullscreen></iframe>
+  <iframe title="" src="<?php echo media_mediahaven_embed_url($umid); ?>" frameborder="0" width="<?php print $video_width; ?>" height="<?php print $video_height; ?>"  allowfullscreen></iframe>
 </div>
