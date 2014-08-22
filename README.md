@@ -5,6 +5,10 @@ This configuration guide is based on the standard drupal installation, the curre
 
 For more information please visit [www.zeticon.com](http://www.zeticon.com) or contact us at [info@zeticon.com](mailto:info@zeticon.com)
 
+Server Requirements
+-----------------------------------
+Curl must be installed and enabled to run the Mediahaven plugin
+
 Install the media_mediahaven module
 -----------------------------------
 Download the latest release and copy the mediahaven module to "sites/all/modules" and rename the folder to "media_mediahaven" if necessary or rename the zip file to "media_mediahaven" before uploading.
