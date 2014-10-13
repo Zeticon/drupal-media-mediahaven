@@ -253,6 +253,73 @@ function media_mediahaven_form_file_entity_edit_alter(&$form, $form_state) {
   // Not implemented.
 }
 
+function media_mediahaven_form_file_entity_add_upload_alter(&$form, $form_state) {
+  if ($form['#step'] == 1) {
+    $form['mediahaven_upload'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Upload file to Media Haven'),
+      '#default_value' => media_mediahaven_variable_get('upload_choice', FALSE),
+    );
+
+    $form['title'] = array(
+      '#name' => 'title',
+      '#type' => 'textfield',
+      '#title' => t('Title of the media object(s)'),
+      '#size' => 22,
+      '#states' => array(
+        'visible' => array(
+          ':input[name="mediahaven_upload"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+
+    $form['description'] = array(
+      '#name' => 'description',
+      '#type' => 'textarea',
+      '#title' => t('Description of the media object(s)'),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="mediahaven_upload"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+    $form['keywords'] = array(
+      '#name' => 'keywords',
+      '#type' => 'textarea',
+      '#title' => t('Keywords'),
+      '#description' => t('Enter multiple keywords separated by a comma (,)'),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="mediahaven_upload"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+
+    $form['#submit'][] = 'media_mediahaven_add_file_entity_submit';
+  }
+}
+
+function media_mediahaven_add_file_entity_submit($form, &$form_state) {
+  if ($form_state['values']['mediahaven_upload'] == 1) {
+    module_load_include('inc', 'media_mediahaven', 'includes/media_mediahaven.upload');
+
+    $upload = $form_state['values']['upload'];
+    $upload = file_load($upload);
+    $url = file_create_url($upload->uri);
+    $url = str_replace('http://' . $_SERVER['HTTP_HOST'], '', $url);
+    $url = $_SERVER['DOCUMENT_ROOT'] . $url;
+
+    $filename = $upload->filename;
+    $info = pathinfo($filename);
+    $filename = str_replace('.' . $info['extension'], '', $filename);
+    $metadata_file = '/tmp/' . $filename . '.xml';
+    $metadata = media_mediahaven_build_metadata($form_state['values']);
+    media_mediahaven_generate_metadata($metadata_file, $metadata);
+
+    $result = media_mediahaven_rest_client()->upload($url, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
+  }
+}
+
 /**
  * Implements hook form_file_entity_admin_file_alter().
  */
@@ -346,6 +413,24 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
 
   // Our search term can come from the form, or from the pager.
   $term = isset($form_state['values']['search']) ? $form_state['values']['search'] : (isset($_GET['search']) ? $_GET['search'] : '');
+  $tagsearch = isset($form_state['values']['facet_search']) ? $form_state['values']['facet_search'] : (isset($_GET['facet_search']) ? $_GET['facet_search'] : '');
+
+  if (!empty($tagsearch)) {
+    $tagsearch = explode("\n", $tagsearch);
+    $tagsearchstring = array();
+
+    foreach ($tagsearch as $tag) {
+      $tagsearchstring[] = '+(' . $tag . ')';
+    }
+
+    $tagsearchstring = implode(' ', $tagsearchstring);
+  }
+
+  $selected = isset($form_state['values']['facet_selected']) ? $form_state['values']['facet_selected'] : (isset($_GET['facet_selected']) ? $_GET['facet_selected'] : '');
+
+  if (!empty($selected)) {
+    $selected = explode("\n", $selected);
+  }
 
   $form['search'] = array(
     '#type' => 'textfield',
@@ -353,6 +438,70 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     '#description' => t('Input a phrase or tags to search.'),
     '#default_value' => $term,
   );
+
+  //Show selected facets
+  if (!empty($selected)) {
+    $markup = '';
+    foreach ($selected as $index => $selectedterm) {
+      $markup .= l($selectedterm, '<front>', array('attributes' => array('class' => array('facetdeletelink'), 'data' => $index))) . '<br />';
+    }
+
+    $markup = '<strong>' . t('You have filtered on') . ':</strong><br />' . $markup;
+    $form['facetsselected'] = array(
+      '#markup' => $markup,
+    );
+  }
+
+  $form['facet_selected'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Facet selected'),
+    '#default_value' => $selected,
+    '#prefix' => '<div style="display: none;">',
+    '#suffix' => '</div>'
+  );
+
+  $form['facet_search'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Facet search'),
+    '#default_value' => $tagsearch,
+    '#prefix' => '<div style="display: none;">',
+    '#suffix' => '</div>',
+  );
+
+
+  if (!isset($form_state['values']['facet_search'])) {
+    $facets = json_decode(media_mediahaven_rest_client()->getFacets('*'));
+  } else {
+    $facets = json_decode(media_mediahaven_rest_client()->getFacets($form_state['values']['facet_search']));
+  }
+
+  if (isset($facets->facet) && is_array($facets->facet)) {
+    $first = TRUE;
+
+    foreach ($facets->facet as $facet) {
+      $name = $facet->name;
+      $title = $facet->title;
+      $tags = array();
+
+      foreach ($facet->value as $tag) {
+        $tags[] = l(sprintf('%s (%d)', $tag->label, $tag->count), $tag->atom, array('attributes' => array('class' => array('facetlink'), 'data' => $tag->label)));
+      }
+
+      $form["fieldset_{$name}"] = array(
+        '#type' => 'fieldset',
+        '#title' => $title,
+        '#collapsible' => TRUE,
+        '#collapsed' => ($first ? FALSE : TRUE),
+      );
+
+      $form["fieldset_{$name}"]['tags'] = array(
+        '#markup' => theme('item_list', array('items' => $tags)),
+      );
+
+      $first = FALSE;
+    }
+  }
+
   $form['apply'] = array(
     '#type' => 'button',
     '#value' => t('Apply'),
@@ -364,6 +513,11 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     // Reset the pager when we press apply.
     $page = 0;
   }
+
+  if (!empty($tagsearchstring)) {
+    $search = json_decode(media_mediahaven_rest_client()->search(urldecode($tagsearchstring), $page * 15, 15), TRUE);
+  }
+
   if (!empty($term)) {
     $search = json_decode(media_mediahaven_rest_client()->search($term, $page * 15, 15), TRUE);
   }
@@ -415,6 +569,10 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   $query = $_GET;
   if ($term !== '') {
     $query['search'] = $term;
+  }
+
+  if (!empty($tagsearchstring)) {
+    $query['facet_search'] = $tagsearchstring;
   }
 
   $dest = $query['q'];
