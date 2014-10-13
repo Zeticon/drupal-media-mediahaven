@@ -551,6 +551,17 @@ function media_mediahaven_form($form, &$form_state) {
     '#description' => t('Height of the thumbnails (in px)'),
     '#required' => TRUE,
   );
+  $form['media_mediahaven_upload_settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Upload settings'),
+    '#collapsible' => TRUE,
+  );
+
+  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('upload_choice')] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Add uploaded files to MediaHaven by default?'),
+    '#default_value' => media_mediahaven_variable_get('upload_choice', FALSE),
+  );
 
   return system_settings_form($form);
 }

@@ -69,6 +69,68 @@
       });
 
 //      $('.')
+
+        $('.facetlink').each(function(i){
+            $(this).click(function(e){
+                e.preventDefault();
+                var data = $(this).attr('data');
+                var href = $(this).attr('href');
+
+                //Fix the data
+                var current_data = $('#edit-facet-selected').val();
+
+                if (current_data == '') {
+                  $('#edit-facet-selected').val(data);
+                } else {
+                  $('#edit-facet-selected').val($('#edit-facet-selected').val() + "\n" + data);
+                }
+
+                //Fix the href
+                href = href.replace('/?q=', '');
+                var current_search = $('#edit-facet-search').val();
+
+                if (current_search == '') {
+                  $('#edit-facet-search').val(href);
+                } else {
+                  $('#edit-facet-search').val($('#edit-facet-search').val() + "\n" + href);
+                }
+
+                $('#media-mediahaven-browser-add').submit();
+            })
+        });
+
+        $('.facetdeletelink').each(function(i){
+          $(this).click(function(e){
+            //Remove tag
+            e.preventDefault();
+            var data = $(this).attr('data');
+            var selected = $('#edit-facet-selected').val();
+            selected = selected.split("\n");
+            selected.splice(data, 1);
+
+            if (selected.length != 1) {
+              selected = selected.join("\n");
+            } else {
+              selected = selected.join("");
+            }
+            $('#edit-facet-selected').val(selected);
+
+            //Remove atoms
+            var atoms = $('#edit-facet-search').val();
+            atoms = atoms.split("\n");
+            atoms.splice(data, 1);
+
+            if (atoms.length != 1) {
+              atoms = atoms.join("\n");
+            } else {
+              atoms = atoms.join("");
+            }
+
+            $('#edit-facet-search').val(atoms);
+
+            $('#media-mediahaven-browser-add').submit();
+          });
+        });
     }
   }
 
