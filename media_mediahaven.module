@@ -297,6 +297,13 @@ function media_mediahaven_form_file_entity_add_upload_alter(&$form, $form_state)
 
     $form['#submit'][] = 'media_mediahaven_add_file_entity_submit';
   }
+
+  if ($form['#step'] == 3) {
+    if ($form_state['values']['mediahaven_upload'] == 1) {
+      $form['scheme']['#default_value'] = 'mediahaven';
+      unset($form['scheme']['#options']['public']);
+    }
+  }
 }
 
 function media_mediahaven_add_file_entity_submit($form, &$form_state) {
@@ -317,7 +324,18 @@ function media_mediahaven_add_file_entity_submit($form, &$form_state) {
     media_mediahaven_generate_metadata($metadata_file, $metadata);
 
     $result = media_mediahaven_rest_client()->upload($url, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
+    $result = json_decode($result);
+
+    //Alter the file
+    $fid = $form_state['values']['upload'];
+    $file = file_load($fid);
+
+    $uri = file_stream_wrapper_uri_normalize("mediahaven://f/" . $result->fragmentId);
+    $file->uri = $uri;
+
+    file_save($file);
   }
+
 }
 
 /**
