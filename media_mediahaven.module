@@ -295,6 +295,7 @@ function media_mediahaven_form_file_entity_add_upload_alter(&$form, $form_state)
       ),
     );
 
+    $form['#validate'][] = 'media_mediahaven_add_file_entity_validate';
     $form['#submit'][] = 'media_mediahaven_add_file_entity_submit';
   }
 
@@ -306,7 +307,7 @@ function media_mediahaven_form_file_entity_add_upload_alter(&$form, $form_state)
   }
 }
 
-function media_mediahaven_add_file_entity_submit($form, &$form_state) {
+function media_mediahaven_add_file_entity_validate($form, &$form_state) {
   if ($form_state['values']['mediahaven_upload'] == 1) {
     module_load_include('inc', 'media_mediahaven', 'includes/media_mediahaven.upload');
 
@@ -326,16 +327,27 @@ function media_mediahaven_add_file_entity_submit($form, &$form_state) {
     $result = media_mediahaven_rest_client()->upload($url, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
     $result = json_decode($result);
 
+    if ($result) {
+      $form_state['storage']['fragmentid'] = $result->fragmentId;
+    } else {
+      form_set_error('mediahaven_upload', t('Error processing file to Mediahaven. This file could already exists.'));
+    }
+  }
+}
+
+function media_mediahaven_add_file_entity_submit($form, &$form_state) {
+  if ($form_state['values']['mediahaven_upload'] == 1) {
+    $fragmentid = $form_state['storage']['fragmentid'];
+
     //Alter the file
     $fid = $form_state['values']['upload'];
     $file = file_load($fid);
 
-    $uri = file_stream_wrapper_uri_normalize("mediahaven://f/" . $result->fragmentId);
+    $uri = file_stream_wrapper_uri_normalize("mediahaven://f/" . $fragmentid);
     $file->uri = $uri;
 
     file_save($file);
   }
-
 }
 
 /**
