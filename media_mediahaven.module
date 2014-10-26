@@ -444,6 +444,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   // Our search term can come from the form, or from the pager.
   $term = isset($form_state['values']['search']) ? $form_state['values']['search'] : (isset($_GET['search']) ? $_GET['search'] : '');
   $tagsearch = isset($form_state['values']['facet_search']) ? $form_state['values']['facet_search'] : (isset($_GET['facet_search']) ? $_GET['facet_search'] : '');
+  $tagsearchstring = '';
 
   if (!empty($tagsearch)) {
     $tagsearch = explode("\n", $tagsearch);
@@ -502,7 +503,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   if (!isset($form_state['values']['facet_search'])) {
     $facets = json_decode(media_mediahaven_rest_client()->getFacets('*'));
   } else {
-    $facets = json_decode(media_mediahaven_rest_client()->getFacets($form_state['values']['facet_search']));
+    $facets = json_decode(media_mediahaven_rest_client()->getFacets($tagsearchstring));
   }
 
   if (isset($facets->facet) && is_array($facets->facet)) {
@@ -517,16 +518,18 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
         $tags[] = l(sprintf('%s (%d)', $tag->label, $tag->count), $tag->atom, array('attributes' => array('class' => array('facetlink'), 'data' => $tag->label)));
       }
 
-      $form["fieldset_{$name}"] = array(
-        '#type' => 'fieldset',
-        '#title' => $title,
-        '#collapsible' => TRUE,
-        '#collapsed' => ($first ? FALSE : TRUE),
-      );
+      if (!empty($tags)) {
+        $form["fieldset_{$name}"] = array(
+          '#type' => 'fieldset',
+          '#title' => $title,
+          '#collapsible' => TRUE,
+          '#collapsed' => ($first ? FALSE : TRUE),
+        );
 
-      $form["fieldset_{$name}"]['tags'] = array(
-        '#markup' => theme('item_list', array('items' => $tags)),
-      );
+        $form["fieldset_{$name}"]['tags'] = array(
+          '#markup' => theme('item_list', array('items' => $tags)),
+        );
+      }
 
       $first = FALSE;
     }

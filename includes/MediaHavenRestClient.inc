@@ -85,6 +85,10 @@ class MediaHavenRestClient {
    * Load the facets with a certain query.
    */
   public function getFacets($query) {
+    if (empty($query)) {
+      $query = '*';
+    }
+
     if (strpos($query, self::SUPPORTED_MEDIATYPES_QUERY) == FALSE) {
       $query .= self::SUPPORTED_MEDIATYPES_QUERY;
     }
