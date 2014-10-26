@@ -295,6 +295,7 @@ function media_mediahaven_form_file_entity_add_upload_alter(&$form, $form_state)
       ),
     );
 
+    $form['#validate'][] = 'media_mediahaven_add_file_entity_validate';
     $form['#submit'][] = 'media_mediahaven_add_file_entity_submit';
   }
 
@@ -306,7 +307,7 @@ function media_mediahaven_form_file_entity_add_upload_alter(&$form, $form_state)
   }
 }
 
-function media_mediahaven_add_file_entity_submit($form, &$form_state) {
+function media_mediahaven_add_file_entity_validate($form, &$form_state) {
   if ($form_state['values']['mediahaven_upload'] == 1) {
     module_load_include('inc', 'media_mediahaven', 'includes/media_mediahaven.upload');
 
@@ -326,16 +327,27 @@ function media_mediahaven_add_file_entity_submit($form, &$form_state) {
     $result = media_mediahaven_rest_client()->upload($url, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
     $result = json_decode($result);
 
+    if ($result) {
+      $form_state['storage']['fragmentid'] = $result->fragmentId;
+    } else {
+      form_set_error('mediahaven_upload', t('Error processing file to Mediahaven. This file could already exists.'));
+    }
+  }
+}
+
+function media_mediahaven_add_file_entity_submit($form, &$form_state) {
+  if ($form_state['values']['mediahaven_upload'] == 1) {
+    $fragmentid = $form_state['storage']['fragmentid'];
+
     //Alter the file
     $fid = $form_state['values']['upload'];
     $file = file_load($fid);
 
-    $uri = file_stream_wrapper_uri_normalize("mediahaven://f/" . $result->fragmentId);
+    $uri = file_stream_wrapper_uri_normalize("mediahaven://f/" . $fragmentid);
     $file->uri = $uri;
 
     file_save($file);
   }
-
 }
 
 /**
@@ -432,6 +444,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   // Our search term can come from the form, or from the pager.
   $term = isset($form_state['values']['search']) ? $form_state['values']['search'] : (isset($_GET['search']) ? $_GET['search'] : '');
   $tagsearch = isset($form_state['values']['facet_search']) ? $form_state['values']['facet_search'] : (isset($_GET['facet_search']) ? $_GET['facet_search'] : '');
+  $tagsearchstring = '';
 
   if (!empty($tagsearch)) {
     $tagsearch = explode("\n", $tagsearch);
@@ -490,7 +503,7 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   if (!isset($form_state['values']['facet_search'])) {
     $facets = json_decode(media_mediahaven_rest_client()->getFacets('*'));
   } else {
-    $facets = json_decode(media_mediahaven_rest_client()->getFacets($form_state['values']['facet_search']));
+    $facets = json_decode(media_mediahaven_rest_client()->getFacets($tagsearchstring));
   }
 
   if (isset($facets->facet) && is_array($facets->facet)) {
@@ -505,16 +518,18 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
         $tags[] = l(sprintf('%s (%d)', $tag->label, $tag->count), $tag->atom, array('attributes' => array('class' => array('facetlink'), 'data' => $tag->label)));
       }
 
-      $form["fieldset_{$name}"] = array(
-        '#type' => 'fieldset',
-        '#title' => $title,
-        '#collapsible' => TRUE,
-        '#collapsed' => ($first ? FALSE : TRUE),
-      );
+      if (!empty($tags)) {
+        $form["fieldset_{$name}"] = array(
+          '#type' => 'fieldset',
+          '#title' => $title,
+          '#collapsible' => TRUE,
+          '#collapsed' => ($first ? FALSE : TRUE),
+        );
 
-      $form["fieldset_{$name}"]['tags'] = array(
-        '#markup' => theme('item_list', array('items' => $tags)),
-      );
+        $form["fieldset_{$name}"]['tags'] = array(
+          '#markup' => theme('item_list', array('items' => $tags)),
+        );
+      }
 
       $first = FALSE;
     }
