@@ -16,7 +16,7 @@ class MediaMediaHavenBrowser extends MediaBrowserPlugin {
    * Implements MediaBrowserPluginInterface::access().
    */
   public function access($account = NULL) {
-    return media_access('create', $account);
+    return file_entity_access('create', $account);
   }
 
   /**
