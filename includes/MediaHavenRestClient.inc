@@ -108,11 +108,19 @@ class MediaHavenRestClient {
     }
 
     $upload_settings = array(
-      'file' => '@' . $media_file . ';filename=' . substr($media_file, strrpos($media_file, '/') + 1),
-      'metadata' => '@' . $metadata_file,
       'ingestSpaceId' => $ingestspace_id,
       'autoPublish' => $autopublish,
     );
+
+    // PHP 5.6 does not support the @-syntax, but the CURLFile class can be used starting from PHP 5.5.0.
+    if (version_compare(PHP_VERSION, '5.5.0') >= 0) {
+      $upload_settings['file'] = new CURLFile($media_file, file_get_mimetype($media_file), basename($media_file));
+      $upload_settings['metadata'] = new CURLFile($metadata_file);
+    }
+    else {
+      $upload_settings['file'] = '@' . $media_file . ';filename=' . basename($media_file);
+      $upload_settings['metadata'] = '@' . $metadata_file;
+    }
 
     $this->options[CURLOPT_URL] = $this->baseRestUrl . '/media';
     $this->options[CURLOPT_POST] = 1;
