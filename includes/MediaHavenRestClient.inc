@@ -144,7 +144,7 @@ class MediaHavenRestClient {
     if (!$response) {
       return FALSE;
     }
-    elseif ($http_code <= 203) {
+    elseif ($http_code >= 300) {
       $this->error = $response;
       return FALSE;
     }
