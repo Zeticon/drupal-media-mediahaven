@@ -445,6 +445,11 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
   $term = isset($form_state['values']['search']) ? $form_state['values']['search'] : (isset($_GET['search']) ? $_GET['search'] : '');
   $tagsearch = isset($form_state['values']['facet_search']) ? $form_state['values']['facet_search'] : (isset($_GET['facet_search']) ? $_GET['facet_search'] : '');
   $tagsearchstring = '';
+  $termssearchstring = '';
+  
+  if (!empty($term)) {
+    $termssearchstring = str_replace(' ','+',$term);	
+  }
 
   if (!empty($tagsearch)) {
     $tagsearch = explode("\n", $tagsearch);
@@ -499,11 +504,11 @@ function media_mediahaven_browser_add($form, &$form_state = array()) {
     '#suffix' => '</div>',
   );
 
-
-  if (!isset($form_state['values']['facet_search'])) {
+  if(empty($tagsearchstring) && empty($termssearchstring))
+  {
     $facets = json_decode(media_mediahaven_rest_client()->getFacets('*'));
   } else {
-    $facets = json_decode(media_mediahaven_rest_client()->getFacets($tagsearchstring));
+    $facets = json_decode(media_mediahaven_rest_client()->getFacets($termssearchstring . ' ' . $tagsearchstring));
   }
 
   if (isset($facets->facet) && is_array($facets->facet)) {
