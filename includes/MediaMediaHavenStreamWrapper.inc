@@ -23,7 +23,7 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
    */
   public function interpolateUrl() {
 
-    $this->base_url = media_mediahaven_variable_get('url');
+    $this->base_url = media_mediahaven_variable_get('media_mediahaven_url','https://integration.mediahaven.com');
 
     if ($parameters = $this->get_parameters()) {
       return media_mediahaven_embed_url($parameters['f']);
@@ -56,12 +56,11 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
     $parts = $this->get_parameters();
     $rest = media_mediahaven_rest_client();
     $media_object = json_decode($rest->getMediaObject($parts['f']), TRUE);
-   // var_dump($media_object); die;
     if ($media_object) {
       return $media_object['thumbnailImagePath'];
     }
-    $thumb_width = media_mediahaven_variable_get('thumb_width');
-    $thumb_height = media_mediahaven_variable_get('thumb_height');
+    $thumb_width = variable_get('media_mediahaven_thumb_width',150);
+    $thumb_height = variable_get('media_mediahaven_thumb_height',150);
     $url =  media_mediahaven_embed_url($parts['f']);
     $url.= '?w=' . $thumb_width . '&h=' . $thumb_height;
     return $url;

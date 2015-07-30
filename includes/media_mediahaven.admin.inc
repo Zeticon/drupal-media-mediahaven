@@ -324,8 +324,8 @@ function media_mediahaven_generate_result_current($media_item) {
 
   $variables = array();
   $variables['path'] = $media_item['previewImagePath'];
-  $variables['width'] = media_mediahaven_variable_get('thumb_width');
-  $variables['height'] = media_mediahaven_variable_get('thumb_height');
+  $variables['width'] = variable_get('media_mediahaven_thumb_width',150);
+  $variables['height'] = variable_get('media_mediahaven_thumb_height',150);
 
   return l('<img width="' . $variables['width'] .
       '" height="' . $variables['height'] . '" src="' .
@@ -436,45 +436,45 @@ function media_mediahaven_form($form, &$form_state) {
     '#collapsible' => TRUE,
   );
 
-  $form['media_mediahaven_settings'][media_mediahaven_variable_name('login')] = array(
+  $form['media_mediahaven_settings']['media_mediahaven_login'] = array(
     '#type' => 'textfield',
     '#title' => t('MediaHaven login'),
-    '#default_value' => media_mediahaven_variable_get('login'),
+    '#default_value' => variable_get('media_mediahaven_login','apikey'),
     '#size' => 25,
     '#description' => t('The login to be used by the module to communicate with MediaHaven.'),
     '#required' => TRUE,
   );
-  $form['media_mediahaven_settings'][media_mediahaven_variable_name('password')] = array(
+  $form['media_mediahaven_settings']['media_mediahaven_password'] = array(
     '#type' => 'textfield',
     '#title' => t('MediaHaven password'),
-    '#default_value' => media_mediahaven_variable_get('password'),
+    '#default_value' => variable_get('media_mediahaven_password','apikey'),
     '#size' => 25,
     '#description' => t('The password to be used by the module to communicate with MediaHaven.'),
     '#required' => TRUE,
   );
 
-  $form['media_mediahaven_settings'][media_mediahaven_variable_name('url')] = array(
+  $form['media_mediahaven_settings']['media_mediahaven_url'] = array(
     '#type' => 'textfield',
     '#title' => t('MediaHaven url'),
-    '#default_value' => media_mediahaven_variable_get('url'),
+    '#default_value' => variable_get('media_mediahaven_url','https://integration.mediahaven.com'),
     '#size' => 50,
     '#description' => t('The MediaHaven url.'),
     '#required' => TRUE,
   );
 
-  $form['media_mediahaven_settings'][media_mediahaven_variable_name('ingestspace_id')] = array(
+  $form['media_mediahaven_settings']['media_mediahaven_ingestspace_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Ingestspace id'),
-    '#default_value' => media_mediahaven_variable_get('ingestspace_id'),
+    '#default_value' => variable_get('media_mediahaven_ingestspace_id','5ebefe86-279c-4e19-857c-23ec0e975278'),
     '#size' => 50,
     '#description' => t('The MediaHaven ingestspace that will be used to upload files to.'),
     '#required' => FALSE,
   );
 
-  $form['media_mediahaven_settings'][media_mediahaven_variable_name('department_id')] = array(
+  $form['media_mediahaven_settings']['media_mediahaven_department_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Department id'),
-    '#default_value' => media_mediahaven_variable_get('department_id'),
+    '#default_value' => variable_get('media_mediahaven_department_id','cc6ea4c0-c7e9-44e3-906e-8b689d95c8f2'),
     '#size' => 50,
     '#description' => t('The default department where uploaded files will belong to.
           This will be used when autopublishing is enabled'),
@@ -488,10 +488,10 @@ function media_mediahaven_form($form, &$form_state) {
     '#collapsible' => TRUE,
   );
 
-  $form['media_mediahaven_upload_settings'][media_mediahaven_variable_name('autopublish')] = array(
+  $form['media_mediahaven_upload_settings']['media_mediahaven_autopublish'] = array(
     '#type' => 'checkbox',
     '#title' => t('Auto publish'),
-    '#default_value' => media_mediahaven_variable_get('autopublish'),
+    '#default_value' => variable_get('media_mediahaven_autopublish',false),
     '#size' => 50,
     '#description' => t('When enabled files will be automatically published after processing.
           If disabled a user will have to manually publish them using the
@@ -504,26 +504,26 @@ function media_mediahaven_form($form, &$form_state) {
     '#description' => t('Manage rights and copyright notice for media from Mediahaven'),
     '#collapsible' => TRUE,
   );
-  $form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights_owner')] = array(
+  $form['media_mediahaven_rights_settings']['media_mediahaven_rights_owner'] = array(
     '#type' => 'textfield',
     '#title' => t('Rights owner'),
-    '#default_value' => media_mediahaven_variable_get('rights_owner'),
+    '#default_value' => variable_get('media_mediahaven_rights_owner','Zeticon'),
     '#size' => 50,
     '#description' => t('The rights owner for media uploaded to Mediahaven.'),
     '#required' => TRUE,
   );
-  $form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('rights')] = array(
+  $form['media_mediahaven_rights_settings']['media_mediahaven_rights'] = array(
     '#type' => 'textfield',
     '#title' => t('Rights'),
-    '#default_value' => media_mediahaven_variable_get('rights'),
+    '#default_value' => variable_get('media_mediahaven_rights','Full rights on reproduction'),
     '#size' => 50,
     '#description' => t('The rights for using and ditributing the uploaded media.'),
     '#required' => TRUE,
   );
-  $form['media_mediahaven_rights_settings'][media_mediahaven_variable_name('copyright')] = array(
+  $form['media_mediahaven_rights_settings']['media_mediahaven_copyright'] = array(
     '#type' => 'textfield',
     '#title' => t('Copyright Notice'),
-    '#default_value' => media_mediahaven_variable_get('copyright'),
+    '#default_value' => variable_get('media_mediahaven_copyright','Not for commercial use'),
     '#size' => 50,
     '#description' => t('Copyright notice for media uploaded to Mediahaven.'),
     '#required' => TRUE,
@@ -536,18 +536,18 @@ function media_mediahaven_form($form, &$form_state) {
     '#description' => t('Manage the configuration that will to dispaly the MediaHaven thumbnails'),
     '#collapsible' => TRUE,
   );
-  $form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_width')] = array(
+  $form['media_mediahaven_thumbnail_settings']['media_mediahaven_thumb_width'] = array(
     '#type' => 'textfield',
     '#title' => t('Thumb_width'),
-    '#default_value' => media_mediahaven_variable_get('thumb_width'),
+    '#default_value' => variable_get('media_mediahaven_thumb_width',150),
     '#size' => 5,
     '#description' => t('Width of the thumbnails (in px)'),
     '#required' => TRUE,
   );
-  $form['media_mediahaven_thumbnail_settings'][media_mediahaven_variable_name('thumb_height')] = array(
+  $form['media_mediahaven_thumbnail_settings']['media_mediahaven_thumb_height'] = array(
     '#type' => 'textfield',
     '#title' => t('Thumb_height'),
-    '#default_value' => media_mediahaven_variable_get('thumb_height'),
+    '#default_value' => variable_get('media_mediahaven_thumb_height',150),
     '#size' => 5,
     '#description' => t('Height of the thumbnails (in px)'),
     '#required' => TRUE,
@@ -561,17 +561,17 @@ function media_mediahaven_form($form, &$form_state) {
  */
 function media_mediahaven_form_validate($form, &$form_state) {
 
-  if ($form_state['values'][media_mediahaven_variable_name('ingestspace_id')]) {
-    $form_state['values'][media_mediahaven_variable_name('ingestspace_id')] = trim($form_state['values'][media_mediahaven_variable_name('ingestspace_id')]);
-    if (!media_mediahaven_validate_uuid($form_state['values'][media_mediahaven_variable_name('ingestspace_id')])) {
-      form_set_error(media_mediahaven_variable_name('ingestspace_id'), t('Ingestspace id is not a valid uuid.'));
+  if ($form_state['values']['media_mediahaven_ingestspace_id']) {
+    $form_state['values']['media_mediahaven_ingestspace_id'] = trim($form_state['values']['media_mediahaven_ingestspace_id']);
+    if (!media_mediahaven_validate_uuid($form_state['values']['media_mediahaven_ingestspace_id'])) {
+      form_set_error('media_mediahaven_ingestspace_id', t('Ingestspace id is not a valid uuid.'));
     }
   }
 
-  if ($form_state['values'][media_mediahaven_variable_name('department_id')]) {
-    $form_state['values'][media_mediahaven_variable_name('department_id')] = trim($form_state['values'][media_mediahaven_variable_name('department_id')]);
-    if (!media_mediahaven_validate_uuid($form_state['values'][media_mediahaven_variable_name('department_id')])) {
-      form_set_error(media_mediahaven_variable_name('department_id'), t('Department id is not a valid uuid.'));
+  if ($form_state['values']['media_mediahaven_department_id']) {
+    $form_state['values']['media_mediahaven_department_id'] = trim($form_state['values']['media_mediahaven_department_id']);
+    if (!media_mediahaven_validate_uuid($form_state['values']['media_mediahaven_department_id'])) {
+      form_set_error('media_mediahaven_department_id', t('Department id is not a valid uuid.'));
     }
   }
 }

@@ -100,7 +100,7 @@ class MediaHavenRestClient {
    * Upload media file to webservice.
    */
   public function upload($media_file, $metadata_file, $ingestspace_id) {
-    if (media_mediahaven_variable_get('autopublish') == 1) {
+    if (variable_get('media_mediahaven_autopublish',false) == 1) {
       $autopublish = 'true';
     }
     else {

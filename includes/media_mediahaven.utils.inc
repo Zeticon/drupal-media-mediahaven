@@ -63,7 +63,7 @@ function media_mediahaven_file_save($media_data) {
 function media_mediahaven_generate_metadata($metadata_file, $metadata) {
 
   $xml = simplexml_load_file(dirname(__FILE__) . '/../assets/metadata.template.xml');
-  $xml->MDProperties[0]->Department = media_mediahaven_variable_get('department_id');
+  $xml->MDProperties[0]->Department = variable_get('media_mediahaven_department_id','cc6ea4c0-c7e9-44e3-906e-8b689d95c8f2');
 
   global $user;
   $application_user = $user->name;
@@ -71,9 +71,9 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
     $application_user = $user->mail;
   }
   $xml->MDProperties[0]->applicatie_gebruiker = $application_user;
-  $xml->MDProperties[0]->rights_owner = media_mediahaven_variable_get('rights_owner');
-  $xml->MDProperties[0]->rights = media_mediahaven_variable_get('rights');
-  $xml->MDProperties[0]->copyright_notice = media_mediahaven_variable_get('copyright');
+  $xml->MDProperties[0]->rights_owner = variable_get('media_mediahaven_rights_owner','Zeticon');
+  $xml->MDProperties[0]->rights = variable_get('media_mediahaven_rights','Full rights on reproduction');
+  $xml->MDProperties[0]->copyright_notice = variable_get('media_mediahaven_copyright','Not for commercial use');
 
   if (!empty($metadata['title'])) {
     $xml->title = $metadata['title'];
@@ -99,9 +99,9 @@ function media_mediahaven_generate_metadata($metadata_file, $metadata) {
  * Initialize the MediaHaven REST client.
  */
 function media_mediahaven_rest_client() {
-  return new MediaHavenRestClient(media_mediahaven_variable_get('url') . MEDIA_MEDIAHAVEN_RESTPOINT,
-    media_mediahaven_variable_get('login'),
-    media_mediahaven_variable_get('password')
+  return new MediaHavenRestClient(variable_get('media_mediahaven_url','https://integration.mediahaven.com') . MEDIA_MEDIAHAVEN_RESTPOINT,
+    variable_get('media_mediahaven_login','apikey'),
+    variable_get('media_mediahaven_password','apikey')
   );
 }
 
@@ -151,7 +151,7 @@ function media_mediahaven_uri_parse_fragmentid($uri) {
  * create the embed uri for a fragment.
  */
 function media_mediahaven_embed_url($fragment_id) {
-  $base_url = media_mediahaven_variable_get('url');
+  $base_url = variable_get('media_mediahaven_url','https://integration.mediahaven.com');
   if (substr($base_url, -1) != '/') {
         $base_url .= '/';
       }    
