@@ -23,7 +23,7 @@ class MediaMediaHavenStreamWrapper extends MediaReadOnlyStreamWrapper {
    */
   public function interpolateUrl() {
 
-    $this->base_url = media_mediahaven_variable_get('media_mediahaven_url','https://integration.mediahaven.com');
+    $this->base_url = variable_get('media_mediahaven_url','https://integration.mediahaven.com');
 
     if ($parameters = $this->get_parameters()) {
       return media_mediahaven_embed_url($parameters['f']);
