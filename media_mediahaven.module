@@ -91,7 +91,7 @@ function media_mediahaven_contents($display) {
   $start_time = mktime(0, 0, 0, $today['mon'], ($today['mday'] - 7), $today['year']);
   // Get all posts from one week ago to the present.
   $end_time = time();
-  $max_num = variable_get('media_mediahaven_media_mediahaven_max', 3);
+  $max_num = variable_get('media_mediahaven_max', 3);
   // Use Database API to retrieve current posts.
   // Published.
   // Most recent first. Query paused here.
