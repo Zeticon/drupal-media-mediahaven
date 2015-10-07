@@ -43,7 +43,7 @@ function theme_media_mediahaven_thumbnail($variables) {
   $suffix = '</div></div>';
 
   // Arguments for the thumbnail link.
-  $thumb = '<img src="' . str_replace('mediahaven://f/', media_mediahaven_variable_get('url') . '/index.php/embed/image?img=',
+  $thumb = '<img src="' . str_replace('mediahaven://f/', variable_get('media_mediahaven_url','https://integration.mediahaven.com') . '/index.php/embed/image?img=',
     $element['#file']->uri
   ) . '&w=100&h=100">';
 
@@ -77,7 +77,7 @@ function media_mediahaven_preprocess_media_mediahaven_video(&$variables) {
   $umid = substr(strrchr($variables['uri'], "/"), 1);
   $variables['umid'] = $umid;
 
-  $variables['mediahaven_url'] = media_mediahaven_variable_get('url');
+  $variables['mediahaven_url'] =variable_get('media_mediahaven_url','https://integration.mediahaven.com');
   $variables['video_width'] = 640;
   $variables['video_height'] = 360;
   return $variables;

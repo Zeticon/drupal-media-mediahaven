@@ -19,8 +19,14 @@ function media_mediahaven_upload($form, &$form_state = array(), $redirect = NULL
     '#description' => t('Files uploaded through this form will be uploaded to MediaHaven and saved within your drupal installation'),
     '#collapsible' => TRUE,
   );
+  module_load_install("plupload");
+  $requirements = plupload_requirements("runtime");
+  if($requirements['plupload']['severity']!=REQUIREMENT_OK){
+    drupal_set_message(t('For easy uploading we recommend using the plupload library. Message: ').$requirements["plupload"]["description"]." ".l("More info","admin/reports/status"));
+  }
 
-  if (module_exists('plupload')) {
+
+  if (module_exists('plupload') && $requirements['plupload']['severity']==REQUIREMENT_OK) {
     $form['upload']['uploaded_file'] = array(
       '#type' => 'plupload',
       '#title' => t('Upload files'),
@@ -94,7 +100,7 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       media_mediahaven_generate_metadata($metadata_file, $metadata);
 
       $rest_client = media_mediahaven_rest_client();
-      $result = $rest_client->upload($destination, $metadata_file, media_mediahaven_variable_get("ingestspace_id"));
+      $result = $rest_client->upload($destination, $metadata_file, variable_get("ingestspace_id",'5ebefe86-279c-4e19-857c-23ec0e975278'));
 
       file_unmanaged_delete($destination);
       file_unmanaged_delete($metadata_file);
