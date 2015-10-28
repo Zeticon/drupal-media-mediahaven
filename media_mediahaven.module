@@ -324,7 +324,7 @@ function media_mediahaven_add_file_entity_validate($form, &$form_state) {
     $metadata = media_mediahaven_build_metadata($form_state['values']);
     media_mediahaven_generate_metadata($metadata_file, $metadata);
 
-    $result = media_mediahaven_rest_client()->upload($url, $metadata_file, variable_get("ingestspace_id",'5ebefe86-279c-4e19-857c-23ec0e975278'));
+    $result = media_mediahaven_rest_client()->upload($url, $metadata_file, variable_get('media_mediahaven_ingestspace_id','5ebefe86-279c-4e19-857c-23ec0e975278'));
     $result = json_decode($result);
 
     if ($result) {

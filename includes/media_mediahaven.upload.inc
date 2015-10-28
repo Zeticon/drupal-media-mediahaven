@@ -100,7 +100,7 @@ function media_mediahaven_upload_submit($form, &$form_state = array(), $redirect
       media_mediahaven_generate_metadata($metadata_file, $metadata);
 
       $rest_client = media_mediahaven_rest_client();
-      $result = $rest_client->upload($destination, $metadata_file, variable_get("ingestspace_id",'5ebefe86-279c-4e19-857c-23ec0e975278'));
+      $result = $rest_client->upload($destination, $metadata_file, variable_get('media_mediahaven_ingestspace_id','5ebefe86-279c-4e19-857c-23ec0e975278'));
 
       file_unmanaged_delete($destination);
       file_unmanaged_delete($metadata_file);
