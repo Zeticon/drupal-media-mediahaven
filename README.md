@@ -1,3 +1,8 @@
+DISCLAIMER
+==========
+This module is no longer actively supported by Zeticon. The latest version of the module is compatible with MediaHaven version 15.1, Zeticon no longer guarantees compatibility with later versions of the MediaHaven platform. You are free to use the code as a guideline for your integration implementations.
+The latest documentation of the API can be found at [MediaHaven API documentation](https://integration.mediahaven.com/mediahaven-rest-api/).
+
 drupal-media-mediahaven
 ====================
 
